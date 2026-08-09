@@ -4,10 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
-  // ============================================================
-  // DATOS DE LA INVITACIÓN
-  // ============================================================
-
   const datos = {
     mama: "Adriana Maldonado",
     papa: "Aldair Lopez",
@@ -25,16 +21,15 @@ export default function Home() {
     whatsapp: "59169580486",
 
     mensajeWhatsApp:
-      "Hola Adriana y Aldair 🕷️🕸️ Confirmo mi asistencia a su Baby Shower y Revelación de Género del 5 de septiembre. 👶💙🩷",
+      "Hola Adriana y Aldair ❤️ Confirmo mi asistencia al Baby Shower y Revelación de Género del 5 de septiembre. 💙🩷",
   };
-
-  // ============================================================
-  // ESTADOS
-  // ============================================================
 
   const [opened, setOpened] = useState(false);
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [secretOpen, setSecretOpen] = useState(false);
+  const [selectedGuess, setSelectedGuess] = useState<
+    "nino" | "nina" | null
+  >(null);
 
   const [timeLeft, setTimeLeft] = useState({
     dias: 0,
@@ -44,10 +39,11 @@ export default function Home() {
   });
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const autoScrollRef = useRef<number | null>(null);
 
-  // ============================================================
-  // CUENTA REGRESIVA
-  // ============================================================
+  /* =========================================================
+     CUENTA REGRESIVA
+  ========================================================= */
 
   useEffect(() => {
     const calcularTiempo = () => {
@@ -63,31 +59,22 @@ export default function Home() {
           minutos: 0,
           segundos: 0,
         });
-
         return;
       }
 
-      const dias = Math.floor(
-        diferencia / (1000 * 60 * 60 * 24)
-      );
-
-      const horas = Math.floor(
-        (diferencia / (1000 * 60 * 60)) % 24
-      );
-
-      const minutos = Math.floor(
-        (diferencia / (1000 * 60)) % 60
-      );
-
-      const segundos = Math.floor(
-        (diferencia / 1000) % 60
-      );
-
       setTimeLeft({
-        dias,
-        horas,
-        minutos,
-        segundos,
+        dias: Math.floor(
+          diferencia / (1000 * 60 * 60 * 24)
+        ),
+        horas: Math.floor(
+          (diferencia / (1000 * 60 * 60)) % 24
+        ),
+        minutos: Math.floor(
+          (diferencia / (1000 * 60)) % 60
+        ),
+        segundos: Math.floor(
+          (diferencia / 1000) % 60
+        ),
       });
     };
 
@@ -101,9 +88,116 @@ export default function Home() {
     return () => clearInterval(intervalo);
   }, []);
 
-  // ============================================================
-  // MÚSICA
-  // ============================================================
+  /* =========================================================
+     ABRIR INVITACIÓN
+  ========================================================= */
+
+  const abrirInvitacion = () => {
+    setOpened(true);
+
+    if (audioRef.current) {
+      audioRef.current
+        .play()
+        .then(() => {
+          setMusicPlaying(true);
+        })
+        .catch(() => {});
+    }
+
+    setTimeout(() => {
+      iniciarAutoScroll();
+    }, 1800);
+  };
+
+  /* =========================================================
+     SCROLL AUTOMÁTICO
+  ========================================================= */
+
+  const iniciarAutoScroll = () => {
+    if (autoScrollRef.current) {
+      cancelAnimationFrame(autoScrollRef.current);
+    }
+
+    const velocidad = 0.35;
+
+    const scroll = () => {
+      const posicionActual =
+        window.innerHeight +
+        window.scrollY;
+
+      const alturaTotal =
+        document.documentElement.scrollHeight;
+
+      if (posicionActual >= alturaTotal - 5) {
+        return;
+      }
+
+      window.scrollBy(0, velocidad);
+
+      autoScrollRef.current =
+        requestAnimationFrame(scroll);
+    };
+
+    autoScrollRef.current =
+      requestAnimationFrame(scroll);
+  };
+
+  /* =========================================================
+     DETENER SCROLL CUANDO EL USUARIO INTERACTÚA
+  ========================================================= */
+
+  useEffect(() => {
+    if (!opened) return;
+
+    const detenerScroll = () => {
+      if (autoScrollRef.current) {
+        cancelAnimationFrame(
+          autoScrollRef.current
+        );
+
+        autoScrollRef.current = null;
+      }
+    };
+
+    window.addEventListener(
+      "touchstart",
+      detenerScroll,
+      { passive: true }
+    );
+
+    window.addEventListener(
+      "wheel",
+      detenerScroll,
+      { passive: true }
+    );
+
+    window.addEventListener(
+      "mousedown",
+      detenerScroll,
+      { passive: true }
+    );
+
+    return () => {
+      window.removeEventListener(
+        "touchstart",
+        detenerScroll
+      );
+
+      window.removeEventListener(
+        "wheel",
+        detenerScroll
+      );
+
+      window.removeEventListener(
+        "mousedown",
+        detenerScroll
+      );
+    };
+  }, [opened]);
+
+  /* =========================================================
+     MÚSICA
+  ========================================================= */
 
   const toggleMusic = () => {
     if (!audioRef.current) return;
@@ -114,20 +208,14 @@ export default function Home() {
     } else {
       audioRef.current
         .play()
-        .then(() => {
-          setMusicPlaying(true);
-        })
-        .catch(() => {
-          console.log(
-            "El navegador bloqueó la reproducción."
-          );
-        });
+        .then(() => setMusicPlaying(true))
+        .catch(() => {});
     }
   };
 
-  // ============================================================
-  // CONFETI AZUL + ROSADO
-  // ============================================================
+  /* =========================================================
+     CONFETI
+  ========================================================= */
 
   const lanzarConfeti = () => {
     const colores = [
@@ -135,39 +223,32 @@ export default function Home() {
       "🩷",
       "💙",
       "🩷",
+      "🤍",
       "💙",
+      "🩷",
+      "🔵",
       "🩷",
     ];
 
-    for (let i = 0; i < 150; i++) {
+    for (let i = 0; i < 180; i++) {
       const confeti =
         document.createElement("div");
 
       confeti.innerHTML =
         colores[
           Math.floor(
-            Math.random() *
-              colores.length
+            Math.random() * colores.length
           )
         ];
 
-      confeti.style.position =
-        "fixed";
-
+      confeti.style.position = "fixed";
       confeti.style.left =
         `${Math.random() * 100}vw`;
-
-      confeti.style.top =
-        "-40px";
-
+      confeti.style.top = "-50px";
       confeti.style.fontSize =
-        `${Math.random() * 18 + 12}px`;
-
-      confeti.style.zIndex =
-        "99999";
-
-      confeti.style.pointerEvents =
-        "none";
+        `${Math.random() * 15 + 12}px`;
+      confeti.style.zIndex = "99999";
+      confeti.style.pointerEvents = "none";
 
       const duracion =
         Math.random() * 2500 + 3000;
@@ -188,7 +269,7 @@ export default function Home() {
           {
             transform:
               `translate3d(${desplazamiento}px,110vh,0) rotate(${rotacion}deg)`,
-            opacity: 0.9,
+            opacity: 0,
           },
         ],
         {
@@ -198,9 +279,7 @@ export default function Home() {
         }
       );
 
-      document.body.appendChild(
-        confeti
-      );
+      document.body.appendChild(confeti);
 
       setTimeout(() => {
         confeti.remove();
@@ -208,18 +287,21 @@ export default function Home() {
     }
   };
 
-  // ============================================================
-  // ABRIR SECRETO
-  // ============================================================
+  /* =========================================================
+     APUESTA
+  ========================================================= */
 
-  const abrirSecreto = () => {
+  const elegirApuesta = (
+    opcion: "nino" | "nina"
+  ) => {
+    setSelectedGuess(opcion);
     setSecretOpen(true);
     lanzarConfeti();
   };
 
-  // ============================================================
-  // WHATSAPP
-  // ============================================================
+  /* =========================================================
+     WHATSAPP
+  ========================================================= */
 
   const confirmarWhatsApp = () => {
     const url =
@@ -228,61 +310,40 @@ export default function Home() {
         datos.mensajeWhatsApp
       )}`;
 
-    window.open(
-      url,
-      "_blank"
-    );
+    window.open(url, "_blank");
   };
 
-  // ============================================================
-  // PORTADA
-  // ============================================================
+  /* =========================================================
+     PORTADA
+  ========================================================= */
 
   if (!opened) {
     return (
-      <main className="min-h-screen overflow-hidden bg-[#080808]">
-
-        {/* FONDO */}
+      <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-100 via-white to-pink-100">
 
         <div
-          className="fixed inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center opacity-30"
           style={{
             backgroundImage:
-              "url('/imagenes/fondo-spider.jpg')",
+              "url('/imagenes/FONDOSPIDER.JPG')",
           }}
         />
 
-        {/* OSCURECER FONDO */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/70 via-white/80 to-pink-100/70" />
 
-        <div className="fixed inset-0 bg-black/70" />
+        {/* Detalles de color */}
 
-        {/* TELARAÑAS */}
+        <div className="absolute -left-20 top-20 h-60 w-60 rounded-full bg-blue-300/30 blur-3xl" />
 
-        <div className="pointer-events-none fixed left-0 top-0 text-[130px] opacity-30">
-          🕸️
-        </div>
-
-        <div className="pointer-events-none fixed right-0 top-0 rotate-90 text-[130px] opacity-30">
-          🕸️
-        </div>
-
-        <div className="pointer-events-none fixed bottom-0 left-0 -rotate-90 text-[130px] opacity-30">
-          🕸️
-        </div>
-
-        <div className="pointer-events-none fixed bottom-0 right-0 rotate-180 text-[130px] opacity-30">
-          🕸️
-        </div>
-
-        {/* CONTENIDO */}
+        <div className="absolute -right-20 bottom-20 h-60 w-60 rounded-full bg-pink-300/30 blur-3xl" />
 
         <div className="relative flex min-h-screen items-center justify-center px-5 py-10">
 
           <motion.div
             initial={{
               opacity: 0,
-              scale: 0.85,
-              y: 40,
+              scale: 0.9,
+              y: 30,
             }}
             animate={{
               opacity: 1,
@@ -292,94 +353,148 @@ export default function Home() {
             transition={{
               duration: 1,
             }}
-            className="relative w-full max-w-md overflow-hidden rounded-[40px] border border-white/20 bg-black/75 px-7 py-12 text-center shadow-2xl backdrop-blur-md"
+            className="relative w-full max-w-md overflow-hidden rounded-[40px] border border-white/80 bg-white/90 px-6 py-10 text-center shadow-[0_20px_80px_rgba(37,99,235,0.18)] backdrop-blur-md"
           >
 
-            {/* TELARAÑA SUPERIOR */}
+            {/* Spider-Man */}
 
-            <div className="absolute left-1/2 top-0 -translate-x-1/2 text-7xl opacity-20">
-              🕸️
-            </div>
+            <motion.img
+              src="/imagenes/SPIDERMANBB.JPG"
+              alt="Spider-Man"
+              className="absolute -left-16 top-2 h-56 w-44 object-contain"
+              animate={{
+                y: [0, -8, 0],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+              }}
+            />
 
-            <p className="relative mt-3 text-xs font-bold tracking-[0.45em] text-white/70">
-              🕷️ UNA NUEVA AVENTURA 🕷️
-            </p>
+            {/* Spider-Woman */}
 
-            <h1 className="mt-7 text-5xl font-black uppercase tracking-wide text-white">
-              Spider
-            </h1>
+            <motion.img
+              src="/imagenes/SPIDERWOMAN.JPG"
+              alt="Spider-Woman"
+              className="absolute -right-16 top-2 h-56 w-44 object-contain"
+              animate={{
+                y: [0, 8, 0],
+              }}
+              transition={{
+                duration: 4.5,
+                repeat: Infinity,
+              }}
+            />
 
-            <h2 className="text-6xl font-black uppercase tracking-wide text-[#e31b23]">
-              Baby
-            </h2>
+            <div className="relative z-10">
 
-            <div className="my-7 text-7xl">
-              🕷️
-            </div>
+              <div className="mx-auto mt-4 flex w-fit items-center gap-2 rounded-full bg-gradient-to-r from-blue-100 to-pink-100 px-4 py-2">
 
-            <p className="text-2xl font-bold text-white">
-              Baby Shower
-            </p>
+                <span className="text-lg">
+                  🕷️
+                </span>
 
-            <p className="my-3 text-lg font-bold text-white/50">
-              &
-            </p>
+                <p className="text-[10px] font-black tracking-[0.3em] text-gray-600">
+                  UNA NUEVA AVENTURA
+                </p>
 
-            <p className="text-2xl font-bold text-white">
-              Revelación de Género
-            </p>
+                <span className="text-lg">
+                  🕷️
+                </span>
 
-            <div className="mx-auto mt-7 h-1 w-24 bg-[#e31b23]" />
+              </div>
 
-            <p className="mt-7 leading-relaxed text-white/70">
-              Una pequeña arañita está
-              <br />
-              por llegar a nuestras vidas...
-            </p>
+              <h1 className="mt-8 text-5xl font-black uppercase italic leading-none text-blue-600">
+                SPIDER
+              </h1>
 
-            <p className="mt-6 text-xl font-semibold text-white">
-              {datos.mama}
+              <h2 className="text-5xl font-black uppercase italic text-red-600">
+                BABY
+              </h2>
 
-              <span className="mx-2 text-[#e31b23]">
+              <div className="mx-auto mt-5 h-1 w-28 rounded-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
+
+              <p className="mt-7 text-xl font-black text-gray-800">
+                Baby Shower
+              </p>
+
+              <p className="my-2 text-pink-500">
                 &
-              </span>
+              </p>
 
-              {datos.papa}
-            </p>
+              <p className="text-xl font-black text-gray-800">
+                Revelación de Género
+              </p>
 
-            <motion.button
-              whileHover={{
-                scale: 1.06,
-              }}
-              whileTap={{
-                scale: 0.95,
-              }}
-              onClick={() =>
-                setOpened(true)
-              }
-              className="mt-9 rounded-full bg-[#e31b23] px-10 py-4 text-sm font-bold tracking-[0.18em] text-white shadow-[0_0_30px_rgba(227,27,35,0.45)]"
-            >
-              🕷️ ABRIR INVITACIÓN
-            </motion.button>
+              <p className="mx-auto mt-7 max-w-xs text-sm leading-relaxed text-gray-500">
+
+                Una nueva aventura está
+                por comenzar y queremos
+                compartirla contigo.
+
+                <br />
+
+                Pero hay un secreto...
+              </p>
+
+              <div className="mt-7 flex justify-center gap-2">
+
+                <span className="rounded-full bg-blue-500 px-4 py-2 text-xs font-black text-white shadow-md">
+                  💙 ¿NIÑO?
+                </span>
+
+                <span className="rounded-full bg-pink-500 px-4 py-2 text-xs font-black text-white shadow-md">
+                  🩷 ¿NIÑA?
+                </span>
+
+              </div>
+
+              <p className="mt-7 text-lg font-bold text-gray-700">
+                {datos.mama}
+
+                <span className="mx-2 text-red-500">
+                  &
+                </span>
+
+                {datos.papa}
+              </p>
+
+              <motion.button
+                whileHover={{
+                  scale: 1.05,
+                }}
+                whileTap={{
+                  scale: 0.95,
+                }}
+                onClick={abrirInvitacion}
+                className="mt-9 rounded-full bg-gradient-to-r from-blue-600 via-red-500 to-pink-500 px-10 py-4 text-sm font-black tracking-[0.12em] text-white shadow-lg"
+              >
+                ABRIR INVITACIÓN
+              </motion.button>
+
+              <p className="mt-5 text-xs text-gray-400">
+                🎵 La aventura comienza al abrir
+              </p>
+
+            </div>
 
           </motion.div>
 
         </div>
-
       </main>
     );
   }
 
-  // ============================================================
-  // INVITACIÓN COMPLETA
-  // ============================================================
+  /* =========================================================
+     INVITACIÓN
+  ========================================================= */
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#f7f7f7] text-[#171717]">
+    <main className="min-h-screen overflow-hidden bg-white">
 
-      {/* ====================================================== */}
-      {/* AUDIO */}
-      {/* ====================================================== */}
+      {/* =====================================================
+          MÚSICA
+      ===================================================== */}
 
       <audio
         ref={audioRef}
@@ -387,781 +502,108 @@ export default function Home() {
         loop
       />
 
-      {/* ====================================================== */}
-      {/* BOTÓN MÚSICA */}
-      {/* ====================================================== */}
+      {/* =====================================================
+          BOTÓN DE MÚSICA
+      ===================================================== */}
 
-      <motion.button
-        whileTap={{
-          scale: 0.9,
-        }}
+      <button
         onClick={toggleMusic}
-        className="fixed right-5 top-5 z-50 flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#e31b23] bg-black text-xl text-white shadow-xl"
+        className="fixed right-5 top-5 z-[500] flex h-12 w-12 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-blue-500 to-pink-500 text-xl text-white shadow-lg"
       >
-        {musicPlaying
-          ? "🔊"
-          : "🎵"}
-      </motion.button>
+        {musicPlaying ? "🔊" : "🎵"}
+      </button>
 
-      {/* ====================================================== */}
-      {/* HERO */}
-      {/* ====================================================== */}
+      {/* =====================================================
+          HERO
+      ===================================================== */}
 
-      <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-6">
+      <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-white to-pink-50">
 
-        {/* TELARAÑAS */}
-
-        <div className="absolute left-[-40px] top-[-30px] text-[150px] opacity-30">
-          🕸️
-        </div>
-
-        <div className="absolute right-[-40px] top-[-30px] rotate-90 text-[150px] opacity-30">
-          🕸️
-        </div>
-
-        <div className="absolute bottom-[-40px] left-[-40px] -rotate-90 text-[150px] opacity-30">
-          🕸️
-        </div>
-
-        <div className="absolute bottom-[-40px] right-[-40px] rotate-180 text-[150px] opacity-30">
-          🕸️
-        </div>
-
-        {/* ARAÑAS */}
-
-        <motion.div
-          animate={{
-            y: [0, -15, 0],
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-15"
+          style={{
+            backgroundImage:
+              "url('/imagenes/FONDOSPIDER.JPG')",
           }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-          }}
-          className="absolute left-5 top-1/3 text-5xl"
-        >
-          🕷️
-        </motion.div>
+        />
 
-        <motion.div
-          animate={{
-            y: [0, 15, 0],
-          }}
-          transition={{
-            duration: 5,
-            repeat: Infinity,
-          }}
-          className="absolute right-5 top-1/2 text-5xl"
-        >
-          🕷️
-        </motion.div>
+        {/* Círculos decorativos */}
 
-        {/* CONTENIDO */}
+        <div className="absolute -left-32 top-20 h-80 w-80 rounded-full bg-blue-300/25 blur-3xl" />
 
-        <div className="relative z-10 mx-auto max-w-3xl text-center">
+        <div className="absolute -right-32 bottom-10 h-80 w-80 rounded-full bg-pink-300/25 blur-3xl" />
 
-          <motion.p
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            className="text-xs font-bold tracking-[0.5em] text-white/60"
-          >
-            UNA NUEVA AVENTURA ESTÁ POR COMENZAR
-          </motion.p>
+        <div className="absolute bottom-0 left-0 h-2 w-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
 
-          <motion.h1
-            initial={{
-              opacity: 0,
-              scale: 0.8,
-            }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-            }}
-            transition={{
-              duration: 1,
-            }}
-            className="mt-7 text-6xl font-black uppercase tracking-wider text-white md:text-8xl"
-          >
-            Spider
+        <div className="relative z-10 flex min-h-screen items-center px-6 py-20">
 
-            <span className="block text-[#e31b23]">
-              Baby
-            </span>
-          </motion.h1>
+          <div className="mx-auto grid w-full max-w-6xl items-center gap-8 md:grid-cols-2">
 
-          <motion.div
-            animate={{
-              y: [0, -12, 0],
-              rotate: [0, 5, 0],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-            }}
-            className="my-8 text-8xl"
-          >
-            🕷️
-          </motion.div>
-
-          <p className="text-xl font-semibold text-white">
-            {datos.mama}
-
-            <span className="mx-2 text-[#e31b23]">
-              &
-            </span>
-
-            {datos.papa}
-          </p>
-
-          <p className="mx-auto mt-7 max-w-xl leading-relaxed text-white/70">
-            Estamos esperando la llegada
-            de nuestro pequeño superhéroe
-            o superheroína...
-          </p>
-
-          <div className="mt-7 flex justify-center gap-5 text-4xl">
-            <span>💙</span>
-            <span>❓</span>
-            <span>🩷</span>
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* ====================================================== */}
-      {/* MENSAJE */}
-      {/* ====================================================== */}
-
-      <section className="relative bg-white px-6 py-24">
-
-        <div className="absolute left-3 top-3 text-5xl opacity-10">
-          🕸️
-        </div>
-
-        <div className="absolute right-3 top-3 text-5xl opacity-10">
-          🕸️
-        </div>
-
-        <div className="relative mx-auto max-w-2xl text-center">
-
-          <div className="text-5xl">
-            🕷️
-          </div>
-
-          <p className="mt-6 text-xs font-bold tracking-[0.4em] text-[#e31b23]">
-            UNA MISIÓN MUY ESPECIAL
-          </p>
-
-          <h2 className="mt-5 text-4xl font-black uppercase text-[#171717]">
-            El comienzo de nuestra aventura
-          </h2>
-
-          <div className="mx-auto mt-5 h-1 w-20 bg-[#e31b23]" />
-
-          <p className="mt-7 leading-relaxed text-gray-600">
-            La vida nos ha regalado una
-            misión maravillosa.
-
-            <br />
-            <br />
-
-            Una pequeña personita está
-            creciendo y queremos celebrar
-            su llegada junto a las personas
-            que más queremos.
-
-            <br />
-            <br />
-
-            💙 ¿Será un pequeño superhéroe?
-
-            <br />
-
-            🩷 ¿Será una pequeña superheroína?
-
-            <br />
-            <br />
-
-            La respuesta...
-            <strong>
-              nadie la sabe todavía.
-            </strong>
-          </p>
-
-        </div>
-
-      </section>
-
-      {/* ====================================================== */}
-      {/* ADRIANA Y ALDAIR DE BEBÉS */}
-      {/* ====================================================== */}
-
-      <section className="relative overflow-hidden bg-[#f7f7f7] px-5 py-28">
-
-        {/* TELARAÑAS */}
-
-        <div className="pointer-events-none absolute left-[-30px] top-[-20px] text-[130px] opacity-[0.08]">
-          🕸️
-        </div>
-
-        <div className="pointer-events-none absolute right-[-30px] top-[-20px] rotate-90 text-[130px] opacity-[0.08]">
-          🕸️
-        </div>
-
-        <div className="pointer-events-none absolute bottom-[-30px] left-[-30px] -rotate-90 text-[130px] opacity-[0.08]">
-          🕸️
-        </div>
-
-        <div className="pointer-events-none absolute bottom-[-30px] right-[-30px] rotate-180 text-[130px] opacity-[0.08]">
-          🕸️
-        </div>
-
-        <div className="relative z-10 mx-auto max-w-6xl">
-
-          {/* TÍTULO */}
-
-          <div className="text-center">
-
-            <div className="text-5xl">
-              🕷️
-            </div>
-
-            <p className="mt-6 text-xs font-black tracking-[0.4em] text-[#e31b23]">
-              ANTES DE ESTA AVENTURA
-            </p>
-
-            <h2 className="mt-5 text-4xl font-black uppercase text-[#171717] md:text-5xl">
-              Érase una vez...
-            </h2>
-
-            <div className="mx-auto mt-5 h-1 w-20 bg-[#e31b23]" />
-
-            <p className="mx-auto mt-7 max-w-2xl leading-relaxed text-gray-600">
-              Antes de convertirnos en mamá
-              y papá, nosotros también fuimos
-              pequeños.
-
-              <br />
-              <br />
-
-              Y quién sabe...
-              quizá nuestro pequeño
-              superhéroe se parezca un
-              poquito a alguno de nosotros.
-              🥹
-            </p>
-
-          </div>
-
-          {/* ================================================= */}
-          {/* ADRIANA */}
-          {/* ================================================= */}
-
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 40,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-            }}
-            transition={{
-              duration: 0.8,
-            }}
-            className="mt-16"
-          >
-
-            <div className="mb-7 text-center">
-
-              <div className="inline-flex items-center gap-3">
-
-                <span className="text-3xl">
-                  🩷
-                </span>
-
-                <h3 className="text-3xl font-black uppercase text-[#171717]">
-                  Adriana de bebé
-                </h3>
-
-                <span className="text-3xl">
-                  🕷️
-                </span>
-
-              </div>
-
-              <p className="mt-3 text-sm text-gray-500">
-                Nuestra futura mamá también
-                fue una pequeña superheroína.
-              </p>
-
-            </div>
-
-            <div className="grid gap-5 sm:grid-cols-2">
-
-              <motion.div
-                whileHover={{
-                  scale: 1.02,
-                }}
-                className="group relative overflow-hidden rounded-[30px] border-4 border-white bg-white p-2 shadow-xl"
-              >
-
-                <img
-                  src="/imagenes/foto-adriana-bebe1.jpg"
-                  alt="Adriana de bebé"
-                  className="h-[420px] w-full rounded-[24px] object-cover transition duration-700 group-hover:scale-105"
-                />
-
-                <div className="pointer-events-none absolute inset-x-2 bottom-2 rounded-b-[24px] bg-gradient-to-t from-black/60 to-transparent px-5 pb-5 pt-16">
-
-                  <p className="text-sm font-bold text-white">
-                    Pequeña Adriana 🩷
-                  </p>
-
-                </div>
-
-              </motion.div>
-
-              <motion.div
-                whileHover={{
-                  scale: 1.02,
-                }}
-                className="group relative overflow-hidden rounded-[30px] border-4 border-white bg-white p-2 shadow-xl"
-              >
-
-                <img
-                  src="/imagenes/foto-adriana-bebe2.jpg"
-                  alt="Adriana cuando era bebé"
-                  className="h-[420px] w-full rounded-[24px] object-cover transition duration-700 group-hover:scale-105"
-                />
-
-                <div className="pointer-events-none absolute inset-x-2 bottom-2 rounded-b-[24px] bg-gradient-to-t from-black/60 to-transparent px-5 pb-5 pt-16">
-
-                  <p className="text-sm font-bold text-white">
-                    Una pequeña superheroína 🕷️
-                  </p>
-
-                </div>
-
-              </motion.div>
-
-            </div>
-
-          </motion.div>
-
-          {/* ================================================= */}
-          {/* CONEXIÓN */}
-          {/* ================================================= */}
-
-          <motion.div
-            initial={{
-              opacity: 0,
-              scale: 0.8,
-            }}
-            whileInView={{
-              opacity: 1,
-              scale: 1,
-            }}
-            viewport={{
-              once: true,
-            }}
-            className="my-20 text-center"
-          >
-
-            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#e31b23] text-4xl shadow-xl">
-              🕷️
-            </div>
-
-            <p className="mx-auto mt-6 max-w-xl text-lg font-semibold leading-relaxed text-[#171717]">
-              Dos historias que algún día
-              tenían que encontrarse...
-            </p>
-
-            <div className="mt-5 flex justify-center gap-3 text-3xl">
-              <span>🩷</span>
-              <span>❤️</span>
-              <span>💙</span>
-            </div>
-
-          </motion.div>
-
-          {/* ================================================= */}
-          {/* ALDAIR */}
-          {/* ================================================= */}
-
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 40,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-            }}
-            transition={{
-              duration: 0.8,
-            }}
-          >
-
-            <div className="mb-7 text-center">
-
-              <div className="inline-flex items-center gap-3">
-
-                <span className="text-3xl">
-                  🕷️
-                </span>
-
-                <h3 className="text-3xl font-black uppercase text-[#171717]">
-                  Aldair de bebé
-                </h3>
-
-                <span className="text-3xl">
-                  💙
-                </span>
-
-              </div>
-
-              <p className="mt-3 text-sm text-gray-500">
-                Y nuestro futuro papá también
-                tuvo su propia aventura.
-              </p>
-
-            </div>
-
-            <div className="grid gap-5 sm:grid-cols-2">
-
-              <motion.div
-                whileHover={{
-                  scale: 1.02,
-                }}
-                className="group relative overflow-hidden rounded-[30px] border-4 border-white bg-white p-2 shadow-xl"
-              >
-
-                <img
-                  src="/imagenes/foto-aldair-bebe1.jpg"
-                  alt="Aldair de bebé"
-                  className="h-[420px] w-full rounded-[24px] object-cover transition duration-700 group-hover:scale-105"
-                />
-
-                <div className="pointer-events-none absolute inset-x-2 bottom-2 rounded-b-[24px] bg-gradient-to-t from-black/60 to-transparent px-5 pb-5 pt-16">
-
-                  <p className="text-sm font-bold text-white">
-                    Pequeño Aldair 💙
-                  </p>
-
-                </div>
-
-              </motion.div>
-
-              <motion.div
-                whileHover={{
-                  scale: 1.02,
-                }}
-                className="group relative overflow-hidden rounded-[30px] border-4 border-white bg-white p-2 shadow-xl"
-              >
-
-                <img
-                  src="/imagenes/foto-aldair-bebe2.jpg"
-                  alt="Aldair cuando era bebé"
-                  className="h-[420px] w-full rounded-[24px] object-cover transition duration-700 group-hover:scale-105"
-                />
-
-                <div className="pointer-events-none absolute inset-x-2 bottom-2 rounded-b-[24px] bg-gradient-to-t from-black/60 to-transparent px-5 pb-5 pt-16">
-
-                  <p className="text-sm font-bold text-white">
-                    Un pequeño superhéroe 🕷️
-                  </p>
-
-                </div>
-
-              </motion.div>
-
-            </div>
-
-          </motion.div>
-
-          {/* ================================================= */}
-          {/* FRASE */}
-          {/* ================================================= */}
-
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-            }}
-            className="mt-20 text-center"
-          >
-
-            <div className="mx-auto max-w-2xl rounded-[35px] bg-black px-7 py-10 shadow-2xl">
-
-              <div className="text-4xl">
-                🕸️
-              </div>
-
-              <p className="mt-6 text-xl font-bold leading-relaxed text-white">
-                Y ahora...
-              </p>
-
-              <p className="mt-3 text-2xl font-black uppercase text-[#e31b23]">
-                Una nueva aventura comienza
-              </p>
-
-              <div className="mt-7 flex justify-center gap-4 text-4xl">
-                <span>🩷</span>
-                <span>🕷️</span>
-                <span>💙</span>
-              </div>
-
-            </div>
-
-          </motion.div>
-
-        </div>
-
-      </section>
-
-      {/* ====================================================== */}
-      {/* FOTOS ACTUALES */}
-      {/* ====================================================== */}
-
-      <section className="bg-[#111114] px-5 py-24">
-
-        <div className="mx-auto max-w-5xl text-center">
-
-          <p className="text-xs font-bold tracking-[0.4em] text-[#e31b23]">
-            NUESTRA HISTORIA
-          </p>
-
-          <h2 className="mt-5 text-4xl font-black uppercase text-white">
-            Preparándonos para nuestra nueva misión
-          </h2>
-
-          <p className="mx-auto mt-6 max-w-xl leading-relaxed text-white/60">
-            Cada momento nos acerca más
-            a conocer a nuestro pequeño
-            superhéroe o superheroína.
-          </p>
-
-          <div className="mt-12 grid gap-5 sm:grid-cols-2">
-
-            {/* FOTO 1 */}
+            {/* TEXTO */}
 
             <motion.div
               initial={{
                 opacity: 0,
-                y: 30,
+                x: -50,
               }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-              }}
-              className="overflow-hidden rounded-[30px] border-4 border-white/10 shadow-2xl sm:row-span-2"
-            >
-
-              <img
-                src="/imagenes/foto1.jpg"
-                alt="Adriana y Aldair"
-                className="h-full min-h-[450px] w-full object-cover transition duration-700 hover:scale-105"
-              />
-
-            </motion.div>
-
-            {/* FOTO 2 */}
-
-            <motion.div
-              initial={{
-                opacity: 0,
-                x: 30,
-              }}
-              whileInView={{
+              animate={{
                 opacity: 1,
                 x: 0,
-              }}
-              viewport={{
-                once: true,
-              }}
-              className="overflow-hidden rounded-[30px] border-4 border-white/10 shadow-2xl"
-            >
-
-              <img
-                src="/imagenes/foto2.jpg"
-                alt="Nuestra historia"
-                className="h-64 w-full object-cover transition duration-700 hover:scale-105"
-              />
-
-            </motion.div>
-
-            {/* FOTO 3 */}
-
-            <motion.div
-              initial={{
-                opacity: 0,
-                x: 30,
-              }}
-              whileInView={{
-                opacity: 1,
-                x: 0,
-              }}
-              viewport={{
-                once: true,
               }}
               transition={{
-                delay: 0.2,
+                duration: 1,
               }}
-              className="overflow-hidden rounded-[30px] border-4 border-white/10 shadow-2xl"
+              className="order-2 text-center md:order-1 md:text-left"
             >
 
-              <img
-                src="/imagenes/foto3.jpg"
-                alt="Esperando a nuestro bebé"
-                className="h-64 w-full object-cover transition duration-700 hover:scale-105"
-              />
+              <p className="text-xs font-black tracking-[0.5em] text-blue-600">
+                SPIDER BABY
+              </p>
+
+              <h1 className="mt-5 text-5xl font-black uppercase italic leading-[0.9] text-gray-800 md:text-7xl">
+
+                Una nueva
+
+                <span className="block bg-gradient-to-r from-blue-600 via-red-500 to-pink-500 bg-clip-text text-transparent">
+                  aventura
+                </span>
+
+              </h1>
+
+              <p className="mt-7 max-w-lg text-lg leading-relaxed text-gray-600">
+
+                Dos superhéroes.
+
+                <br />
+
+                Una nueva misión.
+
+                <br />
+
+                Y un pequeño secreto
+                que nadie conoce.
+
+              </p>
+
+              <div className="mt-8 flex flex-wrap justify-center gap-3 md:justify-start">
+
+                <span className="rounded-full bg-blue-500 px-5 py-2 text-xs font-black text-white shadow-md">
+                  💙 BABY SHOWER
+                </span>
+
+                <span className="rounded-full bg-pink-500 px-5 py-2 text-xs font-black text-white shadow-md">
+                  🩷 REVELACIÓN
+                </span>
+
+              </div>
 
             </motion.div>
 
-          </div>
+            {/* PERSONAJES */}
 
-        </div>
-
-      </section>
-
-      {/* ====================================================== */}
-      {/* CUENTA REGRESIVA */}
-      {/* ====================================================== */}
-
-      <section className="relative overflow-hidden bg-[#e31b23] px-5 py-24">
-
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-around text-8xl opacity-10">
-          🕸️ 🕸️ 🕸️
-        </div>
-
-        <div className="relative z-10 mx-auto max-w-4xl text-center">
-
-          <p className="text-xs font-bold tracking-[0.4em] text-white/70">
-            CUENTA REGRESIVA
-          </p>
-
-          <h2 className="mt-5 text-5xl font-black uppercase text-white">
-            La misión comienza en
-          </h2>
-
-          <div className="mt-10 grid grid-cols-4 gap-2 sm:gap-5">
-
-            {[
-              [timeLeft.dias, "DÍAS"],
-              [timeLeft.horas, "HORAS"],
-              [timeLeft.minutos, "MIN"],
-              [timeLeft.segundos, "SEG"],
-            ].map(
-              ([valor, texto]) => (
-                <div
-                  key={texto}
-                  className="rounded-3xl bg-black/90 p-4 shadow-xl"
-                >
-
-                  <div className="text-3xl font-black text-white sm:text-5xl">
-                    {String(
-                      valor
-                    ).padStart(2, "0")}
-                  </div>
-
-                  <div className="mt-2 text-[9px] font-bold tracking-wider text-white/50 sm:text-xs">
-                    {texto}
-                  </div>
-
-                </div>
-              )
-            )}
-
-          </div>
-
-          <div className="mt-8 font-bold text-white">
-            {datos.fechaTexto}
-
-            <span className="mx-2">
-              •
-            </span>
-
-            {datos.hora}
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* ====================================================== */}
-      {/* REVELACIÓN DE GÉNERO */}
-      {/* ====================================================== */}
-
-      <section className="relative overflow-hidden bg-white px-5 py-28">
-
-        {/* TELARAÑAS */}
-
-        <div className="absolute left-0 top-0 text-[130px] opacity-10">
-          🕸️
-        </div>
-
-        <div className="absolute right-0 top-0 rotate-90 text-[130px] opacity-10">
-          🕸️
-        </div>
-
-        <div className="absolute bottom-0 left-0 -rotate-90 text-[130px] opacity-10">
-          🕸️
-        </div>
-
-        <div className="absolute bottom-0 right-0 rotate-180 text-[130px] opacity-10">
-          🕸️
-        </div>
-
-        <div className="relative z-10 mx-auto max-w-3xl text-center">
-
-          <p className="text-xs font-bold tracking-[0.4em] text-[#e31b23]">
-            🕷️ TOP SECRET 🕷️
-          </p>
-
-          <h2 className="mt-5 text-5xl font-black uppercase text-[#171717]">
-            ¿Niño o niña?
-          </h2>
-
-          <p className="mx-auto mt-7 max-w-lg leading-relaxed text-gray-600">
-            Ni Spider-Man ni Spider-Woman
-            conocen todavía la respuesta.
-
-            <br />
-            <br />
-
-            ¿Quieres intentar descubrir
-            el secreto?
-          </p>
-
-          <AnimatePresence mode="wait">
-
-            {!secretOpen ? (
+            <div className="order-1 flex justify-center md:order-2">
 
               <motion.div
-                key="cerrado"
                 initial={{
                   opacity: 0,
                   scale: 0.8,
@@ -1170,147 +612,589 @@ export default function Home() {
                   opacity: 1,
                   scale: 1,
                 }}
-                className="mt-14"
-              >
-
-                {/* CAJA */}
-
-                <motion.div
-                  animate={{
-                    y: [0, -10, 0],
-                    rotate: [0, 2, -2, 0],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                  }}
-                  className="mx-auto flex h-60 w-80 items-center justify-center rounded-[35px] border-4 border-[#171717] bg-[#e31b23] shadow-[0_20px_50px_rgba(0,0,0,0.25)]"
-                >
-
-                  <div>
-
-                    <div className="text-8xl">
-                      🕷️
-                    </div>
-
-                    <p className="mt-4 text-sm font-black tracking-[0.4em] text-white">
-                      TOP SECRET
-                    </p>
-
-                  </div>
-
-                </motion.div>
-
-                <motion.button
-                  whileHover={{
-                    scale: 1.05,
-                  }}
-                  whileTap={{
-                    scale: 0.95,
-                  }}
-                  onClick={
-                    abrirSecreto
-                  }
-                  className="mt-10 rounded-full bg-black px-10 py-5 text-sm font-black tracking-[0.15em] text-white shadow-xl"
-                >
-                  🕷️ DESCUBRIR EL SECRETO
-                </motion.button>
-
-              </motion.div>
-
-            ) : (
-
-              <motion.div
-                key="abierto"
-                initial={{
-                  opacity: 0,
-                  scale: 0.7,
-                }}
-                animate={{
-                  opacity: 1,
-                  scale: 1,
-                }}
                 transition={{
-                  duration: 0.8,
+                  duration: 1,
                 }}
-                className="mx-auto mt-14 max-w-md rounded-[35px] border-4 border-[#171717] bg-[#f7f7f7] px-7 py-10 shadow-2xl"
+                className="relative flex items-end justify-center"
               >
 
-                <div className="text-7xl">
-                  🕷️
-                </div>
+                <img
+                  src="/imagenes/SPIDERMANBB.JPG"
+                  alt="Spider-Man"
+                  className="relative z-10 h-[390px] w-56 object-contain md:h-[500px]"
+                />
 
-                <h3 className="mt-6 text-3xl font-black uppercase text-[#e31b23]">
-                  ¡El misterio continúa!
-                </h3>
-
-                <p className="mt-5 leading-relaxed text-gray-600">
-                  El secreto está protegido.
-
-                  <br />
-                  <br />
-
-                  La página no contiene
-                  la respuesta.
-                </p>
-
-                <div className="mt-8 flex justify-center gap-5 text-5xl">
-                  <span>💙</span>
-                  <span>❓</span>
-                  <span>🩷</span>
-                </div>
-
-                <p className="mt-8 font-bold text-[#171717]">
-                  🕸️ Lo descubriremos juntos
-                  <br />
-                  el gran día.
-                </p>
-
-                <div className="mt-8 text-3xl">
-                  🕷️ 🕸️ 🕷️
-                </div>
+                <img
+                  src="/imagenes/SPIDERWOMAN.JPG"
+                  alt="Spider-Woman"
+                  className="-ml-12 h-[390px] w-56 object-contain md:-ml-16 md:h-[500px]"
+                />
 
               </motion.div>
 
-            )}
+            </div>
 
-          </AnimatePresence>
+          </div>
 
         </div>
 
       </section>
 
-      {/* ====================================================== */}
-      {/* INFORMACIÓN DEL EVENTO */}
-      {/* ====================================================== */}
+      {/* =====================================================
+          MENSAJE
+      ===================================================== */}
 
-      <section className="bg-[#111114] px-5 py-24">
+      <section className="relative overflow-hidden bg-white px-5 py-28">
+
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-[0.06]"
+          style={{
+            backgroundImage:
+              "url('/imagenes/FONDOSPIDER.JPG')",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-3xl text-center">
+
+          <p className="text-xs font-black tracking-[0.4em] text-pink-500">
+            UNA MISIÓN MUY ESPECIAL
+          </p>
+
+          <h2 className="mt-5 text-4xl font-black uppercase text-gray-800 md:text-5xl">
+            ¡Tenemos una noticia!
+          </h2>
+
+          <div className="mx-auto mt-6 h-1 w-20 rounded-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
+
+          <p className="mt-8 leading-relaxed text-gray-500">
+
+            Estamos viviendo una de las
+            aventuras más importantes
+            de nuestras vidas.
+
+            <br />
+            <br />
+
+            Una pequeña personita viene
+            en camino y queremos compartir
+            este momento tan especial contigo.
+
+            <br />
+            <br />
+
+            Pero existe un pequeño detalle...
+
+          </p>
+
+          <div className="mx-auto mt-10 grid max-w-md grid-cols-2 gap-4">
+
+            <div className="rounded-3xl border border-blue-200 bg-blue-50 p-6 shadow-sm">
+
+              <div className="text-4xl">
+                💙
+              </div>
+
+              <p className="mt-3 font-black text-blue-600">
+                ¿NIÑO?
+              </p>
+
+            </div>
+
+            <div className="rounded-3xl border border-pink-200 bg-pink-50 p-6 shadow-sm">
+
+              <div className="text-4xl">
+                🩷
+              </div>
+
+              <p className="mt-3 font-black text-pink-600">
+                ¿NIÑA?
+              </p>
+
+            </div>
+
+          </div>
+
+          <p className="mt-8 text-lg font-black text-gray-700">
+            ¡Nadie lo sabe todavía! 🤫
+          </p>
+
+        </div>
+
+      </section>
+
+      {/* =====================================================
+          ¿QUÉ LLEVAR?
+      ===================================================== */}
+
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-pink-50 px-5 py-28">
+
+        <div className="mx-auto max-w-5xl">
+
+          <div className="text-center">
+
+            <p className="text-xs font-black tracking-[0.4em] text-red-500">
+              TU MISIÓN COMO INVITADO
+            </p>
+
+            <h2 className="mt-5 text-4xl font-black uppercase text-gray-800 md:text-5xl">
+              ¿Cuál es tu apuesta?
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-2xl leading-relaxed text-gray-500">
+
+              Queremos que seas parte del juego.
+              Elige lo que tú crees que será
+              nuestro pequeño superhéroe.
+
+              <br />
+
+              ¡Y trae tu aporte según tu apuesta!
+
+            </p>
+
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+
+            {/* NIÑO */}
+
+            <motion.button
+              whileHover={{
+                scale: 1.02,
+                y: -5,
+              }}
+              whileTap={{
+                scale: 0.98,
+              }}
+              onClick={() =>
+                elegirApuesta("nino")
+              }
+              className="group rounded-[35px] border-2 border-blue-200 bg-white p-8 text-left shadow-lg transition hover:border-blue-400"
+            >
+
+              <div className="flex items-center justify-between">
+
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-3xl">
+                  💙
+                </div>
+
+                <span className="rounded-full bg-blue-500 px-4 py-2 text-xs font-black text-white">
+                  YO DIGO NIÑO
+                </span>
+
+              </div>
+
+              <h3 className="mt-7 text-3xl font-black text-blue-600">
+                ¿PIENSAS QUE ES NIÑO?
+              </h3>
+
+              <div className="mt-5 rounded-2xl bg-blue-50 p-5">
+
+                <p className="font-bold text-gray-700">
+                  Entonces puedes traer:
+                </p>
+
+                <div className="mt-4 space-y-3 text-gray-600">
+
+                  <p>
+                    🍼 <strong>Pañales</strong>
+                  </p>
+
+                  <p>
+                    🧴 <strong>Toallitas húmedas</strong>
+                  </p>
+
+                </div>
+
+              </div>
+
+            </motion.button>
+
+            {/* NIÑA */}
+
+            <motion.button
+              whileHover={{
+                scale: 1.02,
+                y: -5,
+              }}
+              whileTap={{
+                scale: 0.98,
+              }}
+              onClick={() =>
+                elegirApuesta("nina")
+              }
+              className="group rounded-[35px] border-2 border-pink-200 bg-white p-8 text-left shadow-lg transition hover:border-pink-400"
+            >
+
+              <div className="flex items-center justify-between">
+
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-pink-100 text-3xl">
+                  🩷
+                </div>
+
+                <span className="rounded-full bg-pink-500 px-4 py-2 text-xs font-black text-white">
+                  YO DIGO NIÑA
+                </span>
+
+              </div>
+
+              <h3 className="mt-7 text-3xl font-black text-pink-600">
+                ¿PIENSAS QUE ES NIÑA?
+              </h3>
+
+              <div className="mt-5 rounded-2xl bg-pink-50 p-5">
+
+                <p className="font-bold text-gray-700">
+                  Entonces puedes traer:
+                </p>
+
+                <div className="mt-4 space-y-3 text-gray-600">
+
+                  <p>
+                    🍼 <strong>Pañales</strong>
+                  </p>
+
+                  <p>
+                    🧴 <strong>Cremita para bebé</strong>
+                  </p>
+
+                </div>
+
+              </div>
+
+            </motion.button>
+
+          </div>
+
+          <p className="mt-8 text-center text-sm text-gray-400">
+            💡 También puedes traer algo
+            diferente si lo deseas. Lo importante
+            es compartir este día con nosotros. ❤️
+          </p>
+
+        </div>
+
+      </section>
+
+      {/* =====================================================
+          RESULTADO DE LA APUESTA
+      ===================================================== */}
+
+      <AnimatePresence>
+
+        {secretOpen && (
+
+          <motion.section
+            initial={{
+              opacity: 0,
+              height: 0,
+            }}
+            animate={{
+              opacity: 1,
+              height: "auto",
+            }}
+            className="overflow-hidden bg-white px-5 py-24"
+          >
+
+            <div className="mx-auto max-w-xl text-center">
+
+              <div className="text-6xl">
+                {selectedGuess === "nino"
+                  ? "💙"
+                  : "🩷"}
+              </div>
+
+              <h2 className="mt-6 text-3xl font-black uppercase text-gray-800">
+
+                {selectedGuess === "nino"
+                  ? "¡Tú apuestas por NIÑO!"
+                  : "¡Tú apuestas por NIÑA!"}
+
+              </h2>
+
+              <p className="mt-5 leading-relaxed text-gray-500">
+
+                ¡Apuesta registrada! 😄
+
+                <br />
+                <br />
+
+                Ahora solo queda esperar
+                al gran momento de la revelación.
+
+              </p>
+
+              <div className="mt-7 rounded-3xl bg-gradient-to-r from-blue-50 via-white to-pink-50 p-6">
+
+                <p className="font-black text-gray-700">
+                  🤫 EL VERDADERO SECRETO
+                </p>
+
+                <p className="mt-3 text-sm text-gray-500">
+                  Nadie podrá saberlo hasta
+                  el día de la celebración.
+                </p>
+
+              </div>
+
+            </div>
+
+          </motion.section>
+
+        )}
+
+      </AnimatePresence>
+
+      {/* =====================================================
+          FOTOS DE BEBÉS
+      ===================================================== */}
+
+      <section className="relative bg-white px-5 py-28">
+
+        <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
+
+        <div className="mx-auto max-w-6xl">
+
+          <div className="text-center">
+
+            <p className="text-xs font-black tracking-[0.4em] text-blue-600">
+              ANTES DE ESTA AVENTURA
+            </p>
+
+            <h2 className="mt-5 text-4xl font-black uppercase text-gray-800 md:text-5xl">
+              Cuando nosotros éramos pequeños
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-2xl leading-relaxed text-gray-500">
+
+              Antes de convertirnos en mamá
+              y papá, también fuimos pequeños
+              soñadores.
+
+            </p>
+
+          </div>
+
+          <div className="mt-16 grid gap-12 md:grid-cols-2">
+
+            {/* ADRIANA */}
+
+            <div>
+
+              <h3 className="mb-6 text-center text-2xl font-black uppercase text-pink-500">
+                Spider-Woman 🩷
+              </h3>
+
+              <div className="grid grid-cols-2 gap-4">
+
+                <img
+                  src="/imagenes/foto-adriana-bebe1.jpg"
+                  alt="Adriana de bebé"
+                  className="h-80 w-full rounded-3xl object-cover shadow-lg"
+                />
+
+                <img
+                  src="/imagenes/foto-adriana-bebe2.jpg"
+                  alt="Adriana de niña"
+                  className="h-80 w-full rounded-3xl object-cover shadow-lg"
+                />
+
+              </div>
+
+              <p className="mt-5 text-center text-gray-400">
+                Futura mamá · Adriana
+              </p>
+
+            </div>
+
+            {/* ALDAIR */}
+
+            <div>
+
+              <h3 className="mb-6 text-center text-2xl font-black uppercase text-blue-600">
+                Spider-Man 💙
+              </h3>
+
+              <div className="grid grid-cols-2 gap-4">
+
+                <img
+                  src="/imagenes/foto-aldair-bebe1.jpg"
+                  alt="Aldair de bebé"
+                  className="h-80 w-full rounded-3xl object-cover shadow-lg"
+                />
+
+                <img
+                  src="/imagenes/foto-aldair-bebe2.jpg"
+                  alt="Aldair de niño"
+                  className="h-80 w-full rounded-3xl object-cover shadow-lg"
+                />
+
+              </div>
+
+              <p className="mt-5 text-center text-gray-400">
+                Futuro papá · Aldair
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* =====================================================
+          NUESTRAS FOTOS
+      ===================================================== */}
+
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-pink-50 px-5 py-28">
+
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-[0.05]"
+          style={{
+            backgroundImage:
+              "url('/imagenes/FONDOSPIDER.JPG')",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-6xl">
+
+          <div className="text-center">
+
+            <p className="text-xs font-black tracking-[0.4em] text-red-500">
+              NUESTRA HISTORIA
+            </p>
+
+            <h2 className="mt-5 text-4xl font-black uppercase text-gray-800 md:text-5xl">
+              Dos caminos,
+              <br />
+              una aventura
+            </h2>
+
+          </div>
+
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
+
+            <img
+              src="/imagenes/foto1.jpg"
+              alt="Adriana y Aldair"
+              className="h-[450px] w-full rounded-[30px] object-cover shadow-xl"
+            />
+
+            <img
+              src="/imagenes/foto2.jpg"
+              alt="Adriana y Aldair"
+              className="h-[450px] w-full rounded-[30px] object-cover shadow-xl"
+            />
+
+            <img
+              src="/imagenes/foto3.jpg"
+              alt="Nuestra historia"
+              className="h-[450px] w-full rounded-[30px] object-cover shadow-xl"
+            />
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* =====================================================
+          CUENTA REGRESIVA
+      ===================================================== */}
+
+      <section className="relative overflow-hidden bg-white px-5 py-24">
+
+        <div className="absolute left-0 top-0 h-2 w-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
 
         <div className="mx-auto max-w-5xl text-center">
 
-          <p className="text-xs font-bold tracking-[0.4em] text-[#e31b23]">
-            PREPARA TU TRAJE DE SUPERHÉROE
+          <p className="text-xs font-bold tracking-[0.4em] text-pink-500">
+            CUENTA REGRESIVA
           </p>
 
-          <h2 className="mt-5 text-5xl font-black uppercase text-white">
-            La gran misión
+          <h2 className="mt-5 text-4xl font-black uppercase text-gray-800 md:text-5xl">
+            La misión comienza en...
           </h2>
 
-          <div className="mt-12 grid gap-5 sm:grid-cols-3">
+          <div className="mt-12 grid grid-cols-4 gap-2 md:gap-5">
+
+            {[
+              [timeLeft.dias, "DÍAS"],
+              [timeLeft.horas, "HORAS"],
+              [timeLeft.minutos, "MIN"],
+              [timeLeft.segundos, "SEG"],
+            ].map(([valor, texto]) => (
+              <div
+                key={texto}
+                className="rounded-3xl border border-gray-100 bg-white p-4 shadow-lg md:p-7"
+              >
+
+                <div className="text-3xl font-black text-gray-800 md:text-5xl">
+                  {String(valor).padStart(
+                    2,
+                    "0"
+                  )}
+                </div>
+
+                <p className="mt-2 text-[9px] font-bold tracking-widest text-gray-400 md:text-xs">
+                  {texto}
+                </p>
+
+              </div>
+            ))}
+
+          </div>
+
+          <p className="mt-8 font-bold text-gray-700">
+            {datos.fechaTexto}
+
+            <span className="mx-2 text-pink-500">
+              •
+            </span>
+
+            {datos.hora}
+          </p>
+
+        </div>
+
+      </section>
+
+      {/* =====================================================
+          MAPA / INFORMACIÓN
+      ===================================================== */}
+
+      <section className="relative bg-gradient-to-br from-blue-50 via-white to-pink-50 px-5 py-28">
+
+        <div className="mx-auto max-w-6xl">
+
+          <div className="text-center">
+
+            <p className="text-xs font-black tracking-[0.4em] text-red-500">
+              PREPARA TU TRAJE
+            </p>
+
+            <h2 className="mt-5 text-4xl font-black uppercase text-gray-800">
+              La gran misión
+            </h2>
+
+          </div>
+
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
 
             {/* FECHA */}
 
-            <div className="rounded-[30px] bg-white p-8 shadow-xl">
+            <div className="rounded-[30px] border border-blue-100 bg-white p-8 text-center shadow-lg">
 
-              <div className="text-5xl">
+              <div className="text-4xl">
                 📅
               </div>
 
-              <h3 className="mt-5 font-black tracking-[0.2em]">
+              <h3 className="mt-5 font-black text-gray-800">
                 FECHA
               </h3>
 
-              <p className="mt-4 text-gray-600">
+              <p className="mt-3 text-gray-500">
                 {datos.fechaTexto}
               </p>
 
@@ -1318,17 +1202,17 @@ export default function Home() {
 
             {/* HORA */}
 
-            <div className="rounded-[30px] bg-white p-8 shadow-xl">
+            <div className="rounded-[30px] border border-red-100 bg-white p-8 text-center shadow-lg">
 
-              <div className="text-5xl">
+              <div className="text-4xl">
                 ⏰
               </div>
 
-              <h3 className="mt-5 font-black tracking-[0.2em]">
+              <h3 className="mt-5 font-black text-gray-800">
                 HORA
               </h3>
 
-              <p className="mt-4 text-gray-600">
+              <p className="mt-3 text-gray-500">
                 {datos.hora}
               </p>
 
@@ -1336,17 +1220,17 @@ export default function Home() {
 
             {/* LUGAR */}
 
-            <div className="rounded-[30px] bg-white p-8 shadow-xl">
+            <div className="rounded-[30px] border border-pink-100 bg-white p-8 text-center shadow-lg">
 
-              <div className="text-5xl">
+              <div className="text-4xl">
                 📍
               </div>
 
-              <h3 className="mt-5 font-black tracking-[0.2em]">
+              <h3 className="mt-5 font-black text-gray-800">
                 LUGAR
               </h3>
 
-              <p className="mt-4 text-gray-600">
+              <p className="mt-3 text-gray-500">
                 {datos.lugar}
               </p>
 
@@ -1358,11 +1242,9 @@ export default function Home() {
 
           </div>
 
-          {/* ================================================== */}
           {/* MAPA */}
-          {/* ================================================== */}
 
-          <div className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-[30px] border-4 border-white shadow-2xl">
+          <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-[30px] border-4 border-white bg-white shadow-2xl">
 
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d238.02295767246576!2d-66.19505169608291!3d-17.346049058160695!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93e37562795a049f%3A0xfb64bce4be27c90a!2sAgente%20BCP%20%22ALMACEN%20MIRANDA%22!5e0!3m2!1ses-419!2sbo!4v1786247069079!5m2!1ses-419!2sbo"
@@ -1378,123 +1260,132 @@ export default function Home() {
 
           </div>
 
-          <a
-            href="https://www.google.com/maps/search/?api=1&query=Agente%20BCP%20ALMACEN%20MIRANDA"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-8 inline-block rounded-full bg-[#e31b23] px-10 py-4 text-sm font-black tracking-wider text-white shadow-xl transition hover:scale-105"
-          >
-            📍 ABRIR EN GOOGLE MAPS
-          </a>
+          <div className="text-center">
+
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Agente%20BCP%20ALMACEN%20MIRANDA"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-8 inline-block rounded-full bg-gradient-to-r from-blue-600 to-pink-500 px-10 py-4 text-sm font-black text-white shadow-lg"
+            >
+              📍 ABRIR EN GOOGLE MAPS
+            </a>
+
+          </div>
 
         </div>
 
       </section>
 
-      {/* ====================================================== */}
-      {/* CONFIRMACIÓN */}
-      {/* ====================================================== */}
+      {/* =====================================================
+          CONFIRMACIÓN
+      ===================================================== */}
 
       <section className="relative overflow-hidden bg-white px-6 py-28 text-center">
 
-        <div className="absolute left-0 top-0 text-[130px] opacity-10">
-          🕸️
-        </div>
+        <div className="absolute left-0 top-0 h-2 w-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
 
-        <div className="absolute right-0 bottom-0 rotate-180 text-[130px] opacity-10">
-          🕸️
-        </div>
+        <div className="mx-auto max-w-2xl">
 
-        <div className="relative z-10 mx-auto max-w-2xl">
-
-          <div className="text-6xl">
-            🕷️
-          </div>
-
-          <p className="mt-7 text-xs font-bold tracking-[0.4em] text-[#e31b23]">
-            NECESITAMOS TU AYUDA
+          <p className="text-xs font-black tracking-[0.4em] text-blue-600">
+            ÚNETE A LA MISIÓN
           </p>
 
-          <h2 className="mt-5 text-4xl font-black uppercase">
-            ¿Te unes a nuestra misión?
+          <h2 className="mt-5 text-4xl font-black uppercase text-gray-800">
+            ¿Nos acompañas?
           </h2>
 
-          <p className="mt-7 leading-relaxed text-gray-600">
-            Confirma tu asistencia y
-            acompáñanos a descubrir juntos
-            el gran secreto.
+          <p className="mt-6 leading-relaxed text-gray-500">
+
+            Queremos compartir contigo
+            este momento tan especial.
+
+            <br />
+
+            Ven preparado para descubrir
+            el gran secreto. 💙🩷
+
           </p>
 
-          <motion.button
-            whileHover={{
-              scale: 1.05,
-            }}
-            whileTap={{
-              scale: 0.95,
-            }}
-            onClick={
-              confirmarWhatsApp
-            }
-            className="mt-10 rounded-full bg-[#25D366] px-10 py-5 font-black text-white shadow-xl"
+          <button
+            onClick={confirmarWhatsApp}
+            className="mt-9 rounded-full bg-[#25D366] px-10 py-5 font-black text-white shadow-lg transition hover:scale-105"
           >
             💬 CONFIRMAR ASISTENCIA
-          </motion.button>
+          </button>
 
         </div>
 
       </section>
 
-      {/* ====================================================== */}
-      {/* FINAL */}
-      {/* ====================================================== */}
+      {/* =====================================================
+          FINAL
+      ===================================================== */}
 
-      <footer className="relative overflow-hidden bg-black px-6 py-24 text-center">
+      <footer className="relative overflow-hidden bg-gradient-to-br from-blue-100 via-white to-pink-100 px-6 py-28 text-center">
 
-        <div className="absolute left-0 top-0 text-[120px] opacity-10">
-          🕸️
-        </div>
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-10"
+          style={{
+            backgroundImage:
+              "url('/imagenes/FONDOSPIDER.JPG')",
+          }}
+        />
 
-        <div className="absolute right-0 bottom-0 rotate-180 text-[120px] opacity-10">
-          🕸️
-        </div>
+        <div className="relative mx-auto max-w-3xl">
 
-        <div className="relative z-10">
+          <div className="flex justify-center gap-2">
 
-          <div className="text-6xl">
-            🕷️
+            <img
+              src="/imagenes/SPIDERMANBB.JPG"
+              alt="Spider-Man"
+              className="h-40 w-32 object-contain"
+            />
+
+            <img
+              src="/imagenes/SPIDERWOMAN.JPG"
+              alt="Spider-Woman"
+              className="h-40 w-32 object-contain"
+            />
+
           </div>
 
-          <p className="mt-7 text-xs font-bold tracking-[0.4em] text-white/40">
-            NUESTRA MAYOR AVENTURA
+          <p className="mt-5 text-xs font-bold tracking-[0.4em] text-blue-600">
+            SPIDER BABY
           </p>
 
-          <h2 className="mt-5 text-3xl font-black text-white">
+          <h2 className="mt-6 text-4xl font-black uppercase text-gray-800">
+            Nuestra nueva aventura
+          </h2>
+
+          <p className="mt-6 text-gray-500">
+
             {datos.mama}
 
-            <span className="mx-2 text-[#e31b23]">
+            <span className="mx-2 text-red-500">
               &
             </span>
 
             {datos.papa}
-          </h2>
 
-          <p className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-white/40">
+          </p>
+
+          <div className="mx-auto mt-10 h-1 w-20 rounded-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
+
+          <p className="mt-8 text-sm leading-relaxed text-gray-400">
+
             Gracias por acompañarnos
-            en esta nueva aventura.
+            a descubrir juntos
+            el comienzo de esta nueva historia.
+
           </p>
 
           <div className="mt-8 flex justify-center gap-4 text-3xl">
-            <span>💙</span>
-            <span>🕷️</span>
-            <span>🩷</span>
+            ❤️ 💙 🩷
           </div>
 
-          <div className="mt-8 text-xl text-[#e31b23]">
-            🕸️ 🕷️ 🕸️
-          </div>
-
-          <p className="mt-8 text-xs tracking-[0.3em] text-white/30">
-            SPIDER BABY • 2026
+          <p className="mt-10 text-xs tracking-[0.3em] text-gray-300">
+            2026
           </p>
 
         </div>
