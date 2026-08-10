@@ -1780,7 +1780,7 @@ export default function Home() {
             Nuestra nueva aventura
           </h2>
 
-          <p className="mt-6 text-2xl">
+          <p className="mt-6 text-3xl">
 
             {datos.papa}
 
