@@ -1360,7 +1360,7 @@ export default function Home() {
       <section className="relative overflow-hidden px-5 py-24">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-[0.10]"
+          className="absolute inset-0 bg-cover bg-center opacity-[0.40]"
           style={{
             backgroundImage:
               "url('/imagenes/FONDO2.jpg')",
@@ -1445,7 +1445,7 @@ export default function Home() {
           <div className="relative mt-16 overflow-hidden rounded-[40px] bg-white/95 px-6 py-12 shadow-xl">
 
             <div
-              className="absolute inset-0 bg-cover bg-center opacity-[0.10]"
+              className="absolute inset-0 bg-cover bg-center opacity-[0.40]"
               style={{
                 backgroundImage:
                   "url('/imagenes/FONDO2.jpg')",
@@ -1519,7 +1519,7 @@ export default function Home() {
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-pink-50 px-5 py-28">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-[0.07]"
+          className="absolute inset-0 bg-cover bg-center opacity-[0.35]"
           style={{
             backgroundImage:
               "url('/imagenes/FONDO2.jpg')",
@@ -1648,7 +1648,7 @@ export default function Home() {
       <section className="relative overflow-hidden px-6 py-28 text-center">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-[0.10]"
+          className="absolute inset-0 bg-cover bg-center opacity-[0.40]"
           style={{
             backgroundImage:
               "url('/imagenes/FONDO2.jpg')",
@@ -1719,7 +1719,7 @@ export default function Home() {
       <footer className="relative overflow-hidden bg-gradient-to-br from-blue-100 via-white to-pink-100 px-6 py-28 text-center">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
+          className="absolute inset-0 bg-cover bg-center opacity-40"
           style={{
             backgroundImage:
               "url('/imagenes/FONDO2.jpg')",
