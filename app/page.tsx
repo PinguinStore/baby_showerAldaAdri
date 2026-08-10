@@ -325,7 +325,7 @@ export default function Home() {
           className="absolute inset-0 bg-cover bg-center opacity-70"
           style={{
             backgroundImage:
-              "url('/imagenes/FONDOSPIDER.JPG')",
+              "url('/imagenes/FONDOSPIDER.jpg')",
           }}
         />
 
@@ -523,7 +523,7 @@ export default function Home() {
           className="absolute inset-0 bg-cover bg-center opacity-50"
           style={{
             backgroundImage:
-              "url('/imagenes/FONDOSPIDER.JPG')",
+              "url('/imagenes/FONDOSPIDER.jpg')",
           }}
         />
 
@@ -619,13 +619,13 @@ export default function Home() {
               >
 
                 <img
-                  src="/imagenes/SPIDERMAN.PNG"
+                  src="/imagenes/SPIDERMAN.png"
                   alt="Spider-Man"
                   className="relative z-10 h-[390px] w-56 object-contain md:h-[500px]"
                 />
 
                 <img
-                  src="/imagenes/SPIDERWOMAN.PNG"
+                  src="/imagenes/SPIDERWOMAN.png"
                   alt="Spider-Woman"
                   className="-ml-12 h-[390px] w-56 object-contain md:-ml-16 md:h-[500px]"
                 />
@@ -650,7 +650,7 @@ export default function Home() {
           className="absolute inset-0 bg-cover bg-center opacity-[0.20]"
           style={{
             backgroundImage:
-              "url('/imagenes/FONDOSPIDER.JPG')",
+              "url('/imagenes/FONDOSPIDER.jpg')",
           }}
         />
 
@@ -1053,7 +1053,7 @@ export default function Home() {
           className="absolute inset-0 bg-cover bg-center opacity-[0.15]"
           style={{
             backgroundImage:
-              "url('/imagenes/FONDOSPIDER.JPG')",
+              "url('/imagenes/FONDOSPIDER.jpg')",
           }}
         />
 
@@ -1328,7 +1328,7 @@ export default function Home() {
           className="absolute inset-0 bg-cover bg-center opacity-30"
           style={{
             backgroundImage:
-              "url('/imagenes/FONDOSPIDER.JPG')",
+              "url('/imagenes/FONDOSPIDER.jpg')",
           }}
         />
 
@@ -1337,13 +1337,13 @@ export default function Home() {
           <div className="flex justify-center gap-2">
 
             <img
-              src="/imagenes/SPIDERMANBB.JPG"
+              src="/imagenes/SPIDERMAN.png"
               alt="Spider-Man"
               className="h-40 w-32 object-contain"
             />
 
             <img
-              src="/imagenes/SPIDERWOMAN.JPG"
+              src="/imagenes/SPIDERWOMAN.png"
               alt="Spider-Woman"
               className="h-40 w-32 object-contain"
             />
