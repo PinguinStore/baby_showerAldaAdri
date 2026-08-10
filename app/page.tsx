@@ -1192,7 +1192,7 @@ export default function Home() {
       <section className="relative overflow-hidden px-5 py-28">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-[0.10]"
+          className="absolute inset-0 bg-cover bg-center opacity-[0.30]"
           style={{
             backgroundImage:
               "url('/imagenes/FONDO2.jpg')",
@@ -1304,7 +1304,7 @@ export default function Home() {
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-pink-50 px-5 py-28">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-[0.10]"
+          className="absolute inset-0 bg-cover bg-center opacity-[0.30]"
           style={{
             backgroundImage:
               "url('/imagenes/FONDO2.jpg')",
@@ -1392,7 +1392,7 @@ export default function Home() {
           </p>
 
           <h2 className="mt-5 text-4xl font-black uppercase text-gray-800 md:text-5xl">
-            La misión comienza en...
+            ...
           </h2>
 
           <div className="mt-12 grid grid-cols-4 gap-2 md:gap-5">
@@ -1535,7 +1535,7 @@ export default function Home() {
             </p>
 
             <h2 className="mt-5 text-4xl font-black uppercase text-gray-800">
-              Nos vemos en la misión
+              Nos vemos
             </h2>
 
             <div className="mt-5 text-3xl">
