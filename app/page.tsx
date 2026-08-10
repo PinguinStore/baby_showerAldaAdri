@@ -21,7 +21,7 @@ export default function Home() {
     whatsapp: "59169580486",
 
     mensajeWhatsApp:
-      "Hola Adriana y Aldair ❤️ Confirmo mi asistencia al Baby Shower y Revelación de Género del 5 de septiembre. 💙🩷",
+      "Hola Aldair y Adriana ❤️ Confirmo mi asistencia al Baby Shower y Revelación de Género del 5 de septiembre. 💙🩷",
   };
 
   const [opened, setOpened] = useState(false);
@@ -118,7 +118,7 @@ export default function Home() {
       cancelAnimationFrame(autoScrollRef.current);
     }
 
-    const velocidad = 0.35;
+    const velocidad = 0.55;
 
     const scroll = () => {
       const posicionActual =
@@ -322,7 +322,7 @@ export default function Home() {
       <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-100 via-white to-pink-100">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-30"
+          className="absolute inset-0 bg-cover bg-center opacity-70"
           style={{
             backgroundImage:
               "url('/imagenes/FONDOSPIDER.JPG')",
@@ -359,7 +359,7 @@ export default function Home() {
             {/* Spider-Man */}
 
             <motion.img
-              src="/imagenes/SPIDERMANBB.JPG"
+              src="/imagenes/SPIDERMAN.png"
               alt="Spider-Man"
               className="absolute -left-16 top-2 h-56 w-44 object-contain"
               animate={{
@@ -374,7 +374,7 @@ export default function Home() {
             {/* Spider-Woman */}
 
             <motion.img
-              src="/imagenes/SPIDERWOMAN.JPG"
+              src="/imagenes/SPIDERWOMAN.png"
               alt="Spider-Woman"
               className="absolute -right-16 top-2 h-56 w-44 object-contain"
               animate={{
@@ -520,7 +520,7 @@ export default function Home() {
       <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-white to-pink-50">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-15"
+          className="absolute inset-0 bg-cover bg-center opacity-50"
           style={{
             backgroundImage:
               "url('/imagenes/FONDOSPIDER.JPG')",
@@ -619,13 +619,13 @@ export default function Home() {
               >
 
                 <img
-                  src="/imagenes/SPIDERMANBB.JPG"
+                  src="/imagenes/SPIDERMAN.PNG"
                   alt="Spider-Man"
                   className="relative z-10 h-[390px] w-56 object-contain md:h-[500px]"
                 />
 
                 <img
-                  src="/imagenes/SPIDERWOMAN.JPG"
+                  src="/imagenes/SPIDERWOMAN.PNG"
                   alt="Spider-Woman"
                   className="-ml-12 h-[390px] w-56 object-contain md:-ml-16 md:h-[500px]"
                 />
@@ -647,7 +647,7 @@ export default function Home() {
       <section className="relative overflow-hidden bg-white px-5 py-28">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-[0.06]"
+          className="absolute inset-0 bg-cover bg-center opacity-[0.20]"
           style={{
             backgroundImage:
               "url('/imagenes/FONDOSPIDER.JPG')",
@@ -988,13 +988,13 @@ export default function Home() {
               <div className="grid grid-cols-2 gap-4">
 
                 <img
-                  src="/imagenes/foto-adriana-bebe1.jpg"
+                  src="/imagenes/foto-adriana-bebe1.jpeg"
                   alt="Adriana de bebé"
                   className="h-80 w-full rounded-3xl object-cover shadow-lg"
                 />
 
                 <img
-                  src="/imagenes/foto-adriana-bebe2.jpg"
+                  src="/imagenes/foto-adriana-bebe2.jpeg"
                   alt="Adriana de niña"
                   className="h-80 w-full rounded-3xl object-cover shadow-lg"
                 />
@@ -1018,13 +1018,13 @@ export default function Home() {
               <div className="grid grid-cols-2 gap-4">
 
                 <img
-                  src="/imagenes/foto-aldair-bebe1.jpg"
+                  src="/imagenes/foto-aldair-bebe1.jpeg"
                   alt="Aldair de bebé"
                   className="h-80 w-full rounded-3xl object-cover shadow-lg"
                 />
 
                 <img
-                  src="/imagenes/foto-aldair-bebe2.jpg"
+                  src="/imagenes/foto-aldair-bebe2.jpeg"
                   alt="Aldair de niño"
                   className="h-80 w-full rounded-3xl object-cover shadow-lg"
                 />
@@ -1050,7 +1050,7 @@ export default function Home() {
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-pink-50 px-5 py-28">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-[0.05]"
+          className="absolute inset-0 bg-cover bg-center opacity-[0.15]"
           style={{
             backgroundImage:
               "url('/imagenes/FONDOSPIDER.JPG')",
@@ -1076,19 +1076,19 @@ export default function Home() {
           <div className="mt-12 grid gap-5 md:grid-cols-3">
 
             <img
-              src="/imagenes/foto1.jpg"
+              src="/imagenes/foto2.jpeg"
               alt="Adriana y Aldair"
               className="h-[450px] w-full rounded-[30px] object-cover shadow-xl"
             />
 
             <img
-              src="/imagenes/foto2.jpg"
+              src="/imagenes/foto1.jpeg"
               alt="Adriana y Aldair"
               className="h-[450px] w-full rounded-[30px] object-cover shadow-xl"
             />
 
             <img
-              src="/imagenes/foto3.jpg"
+              src="/imagenes/foto3.jpeg"
               alt="Nuestra historia"
               className="h-[450px] w-full rounded-[30px] object-cover shadow-xl"
             />
@@ -1325,7 +1325,7 @@ export default function Home() {
       <footer className="relative overflow-hidden bg-gradient-to-br from-blue-100 via-white to-pink-100 px-6 py-28 text-center">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-10"
+          className="absolute inset-0 bg-cover bg-center opacity-30"
           style={{
             backgroundImage:
               "url('/imagenes/FONDOSPIDER.JPG')",
