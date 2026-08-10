@@ -27,6 +27,7 @@ export default function Home() {
   const [opened, setOpened] = useState(false);
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [secretOpen, setSecretOpen] = useState(false);
+
   const [selectedGuess, setSelectedGuess] = useState<
     "nino" | "nina" | null
   >(null);
@@ -40,6 +41,7 @@ export default function Home() {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const autoScrollRef = useRef<number | null>(null);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /* =========================================================
      CUENTA REGRESIVA
@@ -59,6 +61,7 @@ export default function Home() {
           minutos: 0,
           segundos: 0,
         });
+
         return;
       }
 
@@ -66,12 +69,15 @@ export default function Home() {
         dias: Math.floor(
           diferencia / (1000 * 60 * 60 * 24)
         ),
+
         horas: Math.floor(
           (diferencia / (1000 * 60 * 60)) % 24
         ),
+
         minutos: Math.floor(
           (diferencia / (1000 * 60)) % 60
         ),
+
         segundos: Math.floor(
           (diferencia / 1000) % 60
         ),
@@ -89,27 +95,6 @@ export default function Home() {
   }, []);
 
   /* =========================================================
-     ABRIR INVITACIÓN
-  ========================================================= */
-
-  const abrirInvitacion = () => {
-    setOpened(true);
-
-    if (audioRef.current) {
-      audioRef.current
-        .play()
-        .then(() => {
-          setMusicPlaying(true);
-        })
-        .catch(() => {});
-    }
-
-    setTimeout(() => {
-      iniciarAutoScroll();
-    }, 1800);
-  };
-
-  /* =========================================================
      SCROLL AUTOMÁTICO
   ========================================================= */
 
@@ -122,8 +107,7 @@ export default function Home() {
 
     const scroll = () => {
       const posicionActual =
-        window.innerHeight +
-        window.scrollY;
+        window.innerHeight + window.scrollY;
 
       const alturaTotal =
         document.documentElement.scrollHeight;
@@ -142,58 +126,120 @@ export default function Home() {
       requestAnimationFrame(scroll);
   };
 
-  /* =========================================================
-     DETENER SCROLL CUANDO EL USUARIO INTERACTÚA
-  ========================================================= */
+  const pausarYReanudarScroll = () => {
+    if (autoScrollRef.current) {
+      cancelAnimationFrame(
+        autoScrollRef.current
+      );
+
+      autoScrollRef.current = null;
+    }
+
+    if (scrollTimeoutRef.current) {
+      clearTimeout(
+        scrollTimeoutRef.current
+      );
+    }
+
+    scrollTimeoutRef.current =
+      setTimeout(() => {
+        iniciarAutoScroll();
+      }, 3000);
+  };
 
   useEffect(() => {
     if (!opened) return;
 
-    const detenerScroll = () => {
-      if (autoScrollRef.current) {
-        cancelAnimationFrame(
-          autoScrollRef.current
-        );
-
-        autoScrollRef.current = null;
-      }
+    const interaccion = () => {
+      pausarYReanudarScroll();
     };
 
     window.addEventListener(
       "touchstart",
-      detenerScroll,
+      interaccion,
       { passive: true }
     );
 
     window.addEventListener(
       "wheel",
-      detenerScroll,
+      interaccion,
       { passive: true }
     );
 
     window.addEventListener(
       "mousedown",
-      detenerScroll,
+      interaccion,
+      { passive: true }
+    );
+
+    window.addEventListener(
+      "touchmove",
+      interaccion,
       { passive: true }
     );
 
     return () => {
       window.removeEventListener(
         "touchstart",
-        detenerScroll
+        interaccion
       );
 
       window.removeEventListener(
         "wheel",
-        detenerScroll
+        interaccion
       );
 
       window.removeEventListener(
         "mousedown",
-        detenerScroll
+        interaccion
       );
+
+      window.removeEventListener(
+        "touchmove",
+        interaccion
+      );
+
+      if (scrollTimeoutRef.current) {
+        clearTimeout(
+          scrollTimeoutRef.current
+        );
+      }
+
+      if (autoScrollRef.current) {
+        cancelAnimationFrame(
+          autoScrollRef.current
+        );
+      }
     };
   }, [opened]);
+
+  /* =========================================================
+     ABRIR INVITACIÓN
+  ========================================================= */
+
+  const abrirInvitacion = () => {
+    setOpened(true);
+
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+
+      audioRef.current
+        .play()
+        .then(() => {
+          setMusicPlaying(true);
+        })
+        .catch((error) => {
+          console.log(
+            "No se pudo reproducir automáticamente:",
+            error
+          );
+        });
+    }
+
+    setTimeout(() => {
+      iniciarAutoScroll();
+    }, 1500);
+  };
 
   /* =========================================================
      MÚSICA
@@ -208,7 +254,9 @@ export default function Home() {
     } else {
       audioRef.current
         .play()
-        .then(() => setMusicPlaying(true))
+        .then(() => {
+          setMusicPlaying(true);
+        })
         .catch(() => {});
     }
   };
@@ -228,6 +276,8 @@ export default function Home() {
       "🩷",
       "🔵",
       "🩷",
+      "✨",
+      "⭐",
     ];
 
     for (let i = 0; i < 180; i++) {
@@ -237,18 +287,25 @@ export default function Home() {
       confeti.innerHTML =
         colores[
           Math.floor(
-            Math.random() * colores.length
+            Math.random() *
+              colores.length
           )
         ];
 
       confeti.style.position = "fixed";
+
       confeti.style.left =
         `${Math.random() * 100}vw`;
+
       confeti.style.top = "-50px";
+
       confeti.style.fontSize =
         `${Math.random() * 15 + 12}px`;
+
       confeti.style.zIndex = "99999";
-      confeti.style.pointerEvents = "none";
+
+      confeti.style.pointerEvents =
+        "none";
 
       const duracion =
         Math.random() * 2500 + 3000;
@@ -279,7 +336,9 @@ export default function Home() {
         }
       );
 
-      document.body.appendChild(confeti);
+      document.body.appendChild(
+        confeti
+      );
 
       setTimeout(() => {
         confeti.remove();
@@ -310,7 +369,10 @@ export default function Home() {
         datos.mensajeWhatsApp
       )}`;
 
-    window.open(url, "_blank");
+    window.open(
+      url,
+      "_blank"
+    );
   };
 
   /* =========================================================
@@ -319,23 +381,69 @@ export default function Home() {
 
   if (!opened) {
     return (
-      <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-100 via-white to-pink-100">
+      <main className="relative min-h-screen overflow-hidden">
 
+        {/* FONDO */}
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-70"
+          className="absolute inset-0 bg-cover bg-center opacity-80"
           style={{
             backgroundImage:
               "url('/imagenes/FONDOSPIDER.jpg')",
           }}
         />
 
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/70 via-white/80 to-pink-100/70" />
+        {/* FONDO2 SUAVE */}
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-20 mix-blend-multiply"
+          style={{
+            backgroundImage:
+              "url('/imagenes/FONDO2.jpg')",
+          }}
+        />
 
-        {/* Detalles de color */}
+        {/* CAPA DE COLOR */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/70 via-white/75 to-pink-100/70" />
 
+        {/* DECORACIONES */}
         <div className="absolute -left-20 top-20 h-60 w-60 rounded-full bg-blue-300/30 blur-3xl" />
 
         <div className="absolute -right-20 bottom-20 h-60 w-60 rounded-full bg-pink-300/30 blur-3xl" />
+
+        <motion.div
+          className="absolute left-4 top-8 text-5xl"
+          animate={{
+            y: [0, -12, 0],
+            rotate: [-5, 5, -5],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+          }}
+        >
+          🎈
+        </motion.div>
+
+        <motion.div
+          className="absolute right-5 top-14 text-5xl"
+          animate={{
+            y: [0, 12, 0],
+            rotate: [5, -5, 5],
+          }}
+          transition={{
+            duration: 4.5,
+            repeat: Infinity,
+          }}
+        >
+          🎈
+        </motion.div>
+
+        <div className="absolute left-5 bottom-24 text-4xl">
+          🍼
+        </div>
+
+        <div className="absolute right-5 bottom-32 text-4xl">
+          🧸
+        </div>
 
         <div className="relative flex min-h-screen items-center justify-center px-5 py-10">
 
@@ -353,10 +461,10 @@ export default function Home() {
             transition={{
               duration: 1,
             }}
-            className="relative w-full max-w-md overflow-hidden rounded-[40px] border border-white/80 bg-white/90 px-6 py-10 text-center shadow-[0_20px_80px_rgba(37,99,235,0.18)] backdrop-blur-md"
+            className="relative w-full max-w-md overflow-hidden rounded-[40px] border border-white/80 bg-white/85 px-6 py-10 text-center shadow-[0_20px_80px_rgba(37,99,235,0.18)] backdrop-blur-md"
           >
 
-            {/* Spider-Man */}
+            {/* PERSONAJES */}
 
             <motion.img
               src="/imagenes/SPIDERMAN.png"
@@ -371,8 +479,6 @@ export default function Home() {
               }}
             />
 
-            {/* Spider-Woman */}
-
             <motion.img
               src="/imagenes/SPIDERWOMAN.png"
               alt="Spider-Woman"
@@ -386,9 +492,15 @@ export default function Home() {
               }}
             />
 
+            {/* DECORACIONES SUPERIORES */}
+
             <div className="relative z-10">
 
-              <div className="mx-auto mt-4 flex w-fit items-center gap-2 rounded-full bg-gradient-to-r from-blue-100 to-pink-100 px-4 py-2">
+              <div className="mt-4 flex justify-center gap-3 text-2xl">
+                🍼 ✨ 🧸 ✨ 🍼
+              </div>
+
+              <div className="mx-auto mt-3 flex w-fit items-center gap-2 rounded-full bg-gradient-to-r from-blue-100 to-pink-100 px-4 py-2">
 
                 <span className="text-lg">
                   🕷️
@@ -427,7 +539,6 @@ export default function Home() {
               </p>
 
               <p className="mx-auto mt-7 max-w-xs text-sm leading-relaxed text-gray-500">
-
                 Una nueva aventura está
                 por comenzar y queremos
                 compartirla contigo.
@@ -450,13 +561,13 @@ export default function Home() {
               </div>
 
               <p className="mt-7 text-lg font-bold text-gray-700">
-                {datos.mama}
+                {datos.papa}
 
                 <span className="mx-2 text-red-500">
                   &
                 </span>
 
-                {datos.papa}
+                {datos.mama}
               </p>
 
               <motion.button
@@ -466,7 +577,9 @@ export default function Home() {
                 whileTap={{
                   scale: 0.95,
                 }}
-                onClick={abrirInvitacion}
+                onClick={
+                  abrirInvitacion
+                }
                 className="mt-9 rounded-full bg-gradient-to-r from-blue-600 via-red-500 to-pink-500 px-10 py-4 text-sm font-black tracking-[0.12em] text-white shadow-lg"
               >
                 ABRIR INVITACIÓN
@@ -476,11 +589,16 @@ export default function Home() {
                 🎵 La aventura comienza al abrir
               </p>
 
+              <div className="mt-6 flex justify-center gap-3 text-2xl">
+                🍼 🎀 🧸 🧦 👶
+              </div>
+
             </div>
 
           </motion.div>
 
         </div>
+
       </main>
     );
   }
@@ -490,7 +608,7 @@ export default function Home() {
   ========================================================= */
 
   return (
-    <main className="min-h-screen overflow-hidden bg-white">
+    <main className="overflow-hidden bg-white">
 
       {/* =====================================================
           MÚSICA
@@ -510,7 +628,9 @@ export default function Home() {
         onClick={toggleMusic}
         className="fixed right-5 top-5 z-[500] flex h-12 w-12 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-blue-500 to-pink-500 text-xl text-white shadow-lg"
       >
-        {musicPlaying ? "🔊" : "🎵"}
+        {musicPlaying
+          ? "🔊"
+          : "🎵"}
       </button>
 
       {/* =====================================================
@@ -520,18 +640,70 @@ export default function Home() {
       <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-white to-pink-50">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-50"
+          className="absolute inset-0 bg-cover bg-center opacity-40"
           style={{
             backgroundImage:
               "url('/imagenes/FONDOSPIDER.jpg')",
           }}
         />
 
-        {/* Círculos decorativos */}
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-10"
+          style={{
+            backgroundImage:
+              "url('/imagenes/FONDO2.jpg')",
+          }}
+        />
+
+        {/* DECORACIONES */}
 
         <div className="absolute -left-32 top-20 h-80 w-80 rounded-full bg-blue-300/25 blur-3xl" />
 
         <div className="absolute -right-32 bottom-10 h-80 w-80 rounded-full bg-pink-300/25 blur-3xl" />
+
+        <motion.div
+          className="absolute left-5 top-24 text-5xl"
+          animate={{
+            y: [0, -15, 0],
+            rotate: [-5, 5, -5],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+          }}
+        >
+          🎈
+        </motion.div>
+
+        <motion.div
+          className="absolute right-5 top-36 text-5xl"
+          animate={{
+            y: [0, 12, 0],
+            rotate: [5, -5, 5],
+          }}
+          transition={{
+            duration: 4.5,
+            repeat: Infinity,
+          }}
+        >
+          🎈
+        </motion.div>
+
+        <div className="absolute left-5 top-1/2 text-4xl opacity-70">
+          🍼
+        </div>
+
+        <div className="absolute right-5 top-[60%] text-4xl opacity-70">
+          🧸
+        </div>
+
+        <div className="absolute bottom-24 left-8 text-3xl">
+          ⭐
+        </div>
+
+        <div className="absolute bottom-16 right-8 text-3xl">
+          🧦
+        </div>
 
         <div className="absolute bottom-0 left-0 h-2 w-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
 
@@ -597,6 +769,10 @@ export default function Home() {
 
               </div>
 
+              <div className="mt-8 flex justify-center gap-4 text-3xl md:justify-start">
+                🍼 🧸 👶 🎀
+              </div>
+
             </motion.div>
 
             {/* PERSONAJES */}
@@ -644,15 +820,31 @@ export default function Home() {
           MENSAJE
       ===================================================== */}
 
-      <section className="relative overflow-hidden bg-white px-5 py-28">
+      <section className="relative overflow-hidden px-5 py-28">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-[0.20]"
+          className="absolute inset-0 bg-cover bg-center opacity-[0.14]"
           style={{
             backgroundImage:
-              "url('/imagenes/FONDOSPIDER.jpg')",
+              "url('/imagenes/FONDO2.jpg')",
           }}
         />
+
+        <div className="absolute left-5 top-12 text-4xl">
+          🎈
+        </div>
+
+        <div className="absolute right-5 top-20 text-4xl">
+          🍼
+        </div>
+
+        <div className="absolute bottom-10 left-8 text-3xl">
+          🧸
+        </div>
+
+        <div className="absolute bottom-10 right-8 text-3xl">
+          🧦
+        </div>
 
         <div className="relative mx-auto max-w-3xl text-center">
 
@@ -688,7 +880,7 @@ export default function Home() {
 
           <div className="mx-auto mt-10 grid max-w-md grid-cols-2 gap-4">
 
-            <div className="rounded-3xl border border-blue-200 bg-blue-50 p-6 shadow-sm">
+            <div className="rounded-3xl border border-blue-200 bg-blue-50/90 p-6 shadow-sm">
 
               <div className="text-4xl">
                 💙
@@ -700,7 +892,7 @@ export default function Home() {
 
             </div>
 
-            <div className="rounded-3xl border border-pink-200 bg-pink-50 p-6 shadow-sm">
+            <div className="rounded-3xl border border-pink-200 bg-pink-50/90 p-6 shadow-sm">
 
               <div className="text-4xl">
                 🩷
@@ -728,7 +920,31 @@ export default function Home() {
 
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-pink-50 px-5 py-28">
 
-        <div className="mx-auto max-w-5xl">
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-[0.08]"
+          style={{
+            backgroundImage:
+              "url('/imagenes/FONDO2.jpg')",
+          }}
+        />
+
+        <div className="absolute left-5 top-10 text-4xl">
+          🍼
+        </div>
+
+        <div className="absolute right-5 top-16 text-4xl">
+          🎈
+        </div>
+
+        <div className="absolute bottom-10 left-8 text-4xl">
+          🧸
+        </div>
+
+        <div className="absolute bottom-10 right-8 text-4xl">
+          🎁
+        </div>
+
+        <div className="relative mx-auto max-w-5xl">
 
           <div className="text-center">
 
@@ -769,7 +985,7 @@ export default function Home() {
               onClick={() =>
                 elegirApuesta("nino")
               }
-              className="group rounded-[35px] border-2 border-blue-200 bg-white p-8 text-left shadow-lg transition hover:border-blue-400"
+              className="group rounded-[35px] border-2 border-blue-200 bg-white/95 p-8 text-left shadow-lg transition hover:border-blue-400"
             >
 
               <div className="flex items-center justify-between">
@@ -797,11 +1013,17 @@ export default function Home() {
                 <div className="mt-4 space-y-3 text-gray-600">
 
                   <p>
-                    🍼 <strong>Pañales</strong>
+                    🍼{" "}
+                    <strong>
+                      Pañales
+                    </strong>
                   </p>
 
                   <p>
-                    🧴 <strong>Toallitas húmedas</strong>
+                    🧴{" "}
+                    <strong>
+                      Toallitas húmedas
+                    </strong>
                   </p>
 
                 </div>
@@ -823,7 +1045,7 @@ export default function Home() {
               onClick={() =>
                 elegirApuesta("nina")
               }
-              className="group rounded-[35px] border-2 border-pink-200 bg-white p-8 text-left shadow-lg transition hover:border-pink-400"
+              className="group rounded-[35px] border-2 border-pink-200 bg-white/95 p-8 text-left shadow-lg transition hover:border-pink-400"
             >
 
               <div className="flex items-center justify-between">
@@ -851,11 +1073,17 @@ export default function Home() {
                 <div className="mt-4 space-y-3 text-gray-600">
 
                   <p>
-                    🍼 <strong>Pañales</strong>
+                    🍼{" "}
+                    <strong>
+                      Pañales
+                    </strong>
                   </p>
 
                   <p>
-                    🧴 <strong>Cremita para bebé</strong>
+                    🧴{" "}
+                    <strong>
+                      Cremita para bebé
+                    </strong>
                   </p>
 
                 </div>
@@ -877,7 +1105,7 @@ export default function Home() {
       </section>
 
       {/* =====================================================
-          RESULTADO DE LA APUESTA
+          RESULTADO APUESTA
       ===================================================== */}
 
       <AnimatePresence>
@@ -893,10 +1121,18 @@ export default function Home() {
               opacity: 1,
               height: "auto",
             }}
-            className="overflow-hidden bg-white px-5 py-24"
+            className="relative overflow-hidden px-5 py-24"
           >
 
-            <div className="mx-auto max-w-xl text-center">
+            <div
+              className="absolute inset-0 bg-cover bg-center opacity-[0.10]"
+              style={{
+                backgroundImage:
+                  "url('/imagenes/FONDO2.jpg')",
+              }}
+            />
+
+            <div className="relative mx-auto max-w-xl text-center">
 
               <div className="text-6xl">
                 {selectedGuess === "nino"
@@ -937,6 +1173,10 @@ export default function Home() {
 
               </div>
 
+              <div className="mt-6 text-3xl">
+                🍼 🎀 🧸 👶 🎈
+              </div>
+
             </div>
 
           </motion.section>
@@ -949,11 +1189,25 @@ export default function Home() {
           FOTOS DE BEBÉS
       ===================================================== */}
 
-      <section className="relative bg-white px-5 py-28">
+      <section className="relative overflow-hidden px-5 py-28">
 
-        <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-[0.10]"
+          style={{
+            backgroundImage:
+              "url('/imagenes/FONDO2.jpg')",
+          }}
+        />
 
-        <div className="mx-auto max-w-6xl">
+        <div className="absolute left-4 top-10 text-4xl">
+          🧸
+        </div>
+
+        <div className="absolute right-4 top-20 text-4xl">
+          🍼
+        </div>
+
+        <div className="relative mx-auto max-w-6xl">
 
           <div className="text-center">
 
@@ -1050,10 +1304,10 @@ export default function Home() {
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-pink-50 px-5 py-28">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-[0.15]"
+          className="absolute inset-0 bg-cover bg-center opacity-[0.10]"
           style={{
             backgroundImage:
-              "url('/imagenes/FONDOSPIDER.jpg')",
+              "url('/imagenes/FONDO2.jpg')",
           }}
         />
 
@@ -1103,11 +1357,35 @@ export default function Home() {
           CUENTA REGRESIVA
       ===================================================== */}
 
-      <section className="relative overflow-hidden bg-white px-5 py-24">
+      <section className="relative overflow-hidden px-5 py-24">
+
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-[0.10]"
+          style={{
+            backgroundImage:
+              "url('/imagenes/FONDO2.jpg')",
+          }}
+        />
+
+        <div className="absolute left-5 top-10 text-4xl">
+          🎈
+        </div>
+
+        <div className="absolute right-5 top-20 text-4xl">
+          🎈
+        </div>
+
+        <div className="absolute bottom-10 left-5 text-3xl">
+          ⭐
+        </div>
+
+        <div className="absolute bottom-10 right-5 text-3xl">
+          ⭐
+        </div>
 
         <div className="absolute left-0 top-0 h-2 w-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
 
-        <div className="mx-auto max-w-5xl text-center">
+        <div className="relative mx-auto max-w-5xl text-center">
 
           <p className="text-xs font-bold tracking-[0.4em] text-pink-500">
             CUENTA REGRESIVA
@@ -1120,41 +1398,115 @@ export default function Home() {
           <div className="mt-12 grid grid-cols-4 gap-2 md:gap-5">
 
             {[
-              [timeLeft.dias, "DÍAS"],
-              [timeLeft.horas, "HORAS"],
-              [timeLeft.minutos, "MIN"],
-              [timeLeft.segundos, "SEG"],
-            ].map(([valor, texto]) => (
-              <div
-                key={texto}
-                className="rounded-3xl border border-gray-100 bg-white p-4 shadow-lg md:p-7"
-              >
+              [
+                timeLeft.dias,
+                "DÍAS",
+              ],
+              [
+                timeLeft.horas,
+                "HORAS",
+              ],
+              [
+                timeLeft.minutos,
+                "MIN",
+              ],
+              [
+                timeLeft.segundos,
+                "SEG",
+              ],
+            ].map(
+              ([valor, texto]) => (
+                <div
+                  key={texto}
+                  className="rounded-3xl border border-gray-100 bg-white/95 p-4 shadow-lg md:p-7"
+                >
 
-                <div className="text-3xl font-black text-gray-800 md:text-5xl">
-                  {String(valor).padStart(
-                    2,
-                    "0"
-                  )}
+                  <div className="text-3xl font-black text-gray-800 md:text-5xl">
+                    {String(
+                      valor
+                    ).padStart(
+                      2,
+                      "0"
+                    )}
+                  </div>
+
+                  <p className="mt-2 text-[9px] font-bold tracking-widest text-gray-400 md:text-xs">
+                    {texto}
+                  </p>
+
                 </div>
-
-                <p className="mt-2 text-[9px] font-bold tracking-widest text-gray-400 md:text-xs">
-                  {texto}
-                </p>
-
-              </div>
-            ))}
+              )
+            )}
 
           </div>
 
-          <p className="mt-8 font-bold text-gray-700">
-            {datos.fechaTexto}
+          {/* FECHA */}
 
-            <span className="mx-2 text-pink-500">
-              •
-            </span>
+          <div className="relative mt-16 overflow-hidden rounded-[40px] bg-white/95 px-6 py-12 shadow-xl">
 
-            {datos.hora}
-          </p>
+            <div
+              className="absolute inset-0 bg-cover bg-center opacity-[0.10]"
+              style={{
+                backgroundImage:
+                  "url('/imagenes/FONDO2.jpg')",
+              }}
+            />
+
+            <div className="absolute left-5 top-5 text-3xl">
+              🍼
+            </div>
+
+            <div className="absolute right-5 top-5 text-3xl">
+              🧸
+            </div>
+
+            <div className="relative z-10">
+
+              <p className="text-xs font-black tracking-[0.4em] text-red-500">
+                📅 RESERVA ESTA FECHA
+              </p>
+
+              <div className="mt-4">
+
+                <p className="text-5xl font-black uppercase tracking-tight text-blue-600 md:text-7xl">
+                  5
+                </p>
+
+                <p className="mt-1 text-2xl font-black uppercase text-gray-800 md:text-3xl">
+                  SEPTIEMBRE
+                </p>
+
+                <p className="mt-1 text-xl font-black text-pink-500">
+                  2026
+                </p>
+
+              </div>
+
+              <div className="mx-auto mt-5 h-1 w-24 rounded-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
+
+              <div className="mt-5 flex items-center justify-center gap-3">
+
+                <span className="text-2xl">
+                  ⏰
+                </span>
+
+                <p className="text-lg font-black text-gray-700">
+                  {datos.hora}
+                </p>
+
+              </div>
+
+              <p className="mt-3 text-sm font-medium text-gray-400">
+                ¡No olvides acompañarnos!
+              </p>
+
+              <div className="mt-6 text-2xl">
+                🎈 🍼 🧸 👶 🎀
+              </div>
+
+            </div>
+
+          </div>
 
         </div>
 
@@ -1164,9 +1516,17 @@ export default function Home() {
           MAPA / INFORMACIÓN
       ===================================================== */}
 
-      <section className="relative bg-gradient-to-br from-blue-50 via-white to-pink-50 px-5 py-28">
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-pink-50 px-5 py-28">
 
-        <div className="mx-auto max-w-6xl">
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-[0.07]"
+          style={{
+            backgroundImage:
+              "url('/imagenes/FONDO2.jpg')",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-6xl">
 
           <div className="text-center">
 
@@ -1175,8 +1535,12 @@ export default function Home() {
             </p>
 
             <h2 className="mt-5 text-4xl font-black uppercase text-gray-800">
-              La gran misión
+              Nos vemos en la misión
             </h2>
+
+            <div className="mt-5 text-3xl">
+              🎈 🍼 🧸 👶 🎈
+            </div>
 
           </div>
 
@@ -1184,7 +1548,7 @@ export default function Home() {
 
             {/* FECHA */}
 
-            <div className="rounded-[30px] border border-blue-100 bg-white p-8 text-center shadow-lg">
+            <div className="rounded-[30px] border border-blue-100 bg-white/95 p-8 text-center shadow-lg">
 
               <div className="text-4xl">
                 📅
@@ -1194,7 +1558,7 @@ export default function Home() {
                 FECHA
               </h3>
 
-              <p className="mt-3 text-gray-500">
+              <p className="mt-5 text-gray-500">
                 {datos.fechaTexto}
               </p>
 
@@ -1202,7 +1566,7 @@ export default function Home() {
 
             {/* HORA */}
 
-            <div className="rounded-[30px] border border-red-100 bg-white p-8 text-center shadow-lg">
+            <div className="rounded-[30px] border border-red-100 bg-white/95 p-8 text-center shadow-lg">
 
               <div className="text-4xl">
                 ⏰
@@ -1220,7 +1584,7 @@ export default function Home() {
 
             {/* LUGAR */}
 
-            <div className="rounded-[30px] border border-pink-100 bg-white p-8 text-center shadow-lg">
+            <div className="rounded-[30px] border border-pink-100 bg-white/95 p-8 text-center shadow-lg">
 
               <div className="text-4xl">
                 📍
@@ -1281,11 +1645,35 @@ export default function Home() {
           CONFIRMACIÓN
       ===================================================== */}
 
-      <section className="relative overflow-hidden bg-white px-6 py-28 text-center">
+      <section className="relative overflow-hidden px-6 py-28 text-center">
+
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-[0.10]"
+          style={{
+            backgroundImage:
+              "url('/imagenes/FONDO2.jpg')",
+          }}
+        />
+
+        <div className="absolute left-5 top-10 text-4xl">
+          🎈
+        </div>
+
+        <div className="absolute right-5 top-20 text-4xl">
+          🎈
+        </div>
+
+        <div className="absolute bottom-10 left-10 text-3xl">
+          🍼
+        </div>
+
+        <div className="absolute bottom-10 right-10 text-3xl">
+          🧸
+        </div>
 
         <div className="absolute left-0 top-0 h-2 w-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
 
-        <div className="mx-auto max-w-2xl">
+        <div className="relative mx-auto max-w-2xl">
 
           <p className="text-xs font-black tracking-[0.4em] text-blue-600">
             ÚNETE A LA MISIÓN
@@ -1307,8 +1695,14 @@ export default function Home() {
 
           </p>
 
+          <div className="mt-8 text-3xl">
+            🍼 🎀 🧸 👶 🎈
+          </div>
+
           <button
-            onClick={confirmarWhatsApp}
+            onClick={
+              confirmarWhatsApp
+            }
             className="mt-9 rounded-full bg-[#25D366] px-10 py-5 font-black text-white shadow-lg transition hover:scale-105"
           >
             💬 CONFIRMAR ASISTENCIA
@@ -1325,12 +1719,36 @@ export default function Home() {
       <footer className="relative overflow-hidden bg-gradient-to-br from-blue-100 via-white to-pink-100 px-6 py-28 text-center">
 
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-30"
+          className="absolute inset-0 bg-cover bg-center opacity-20"
+          style={{
+            backgroundImage:
+              "url('/imagenes/FONDO2.jpg')",
+          }}
+        />
+
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{
             backgroundImage:
               "url('/imagenes/FONDOSPIDER.jpg')",
           }}
         />
+
+        <div className="absolute left-5 top-10 text-4xl">
+          🎈
+        </div>
+
+        <div className="absolute right-5 top-20 text-4xl">
+          🎈
+        </div>
+
+        <div className="absolute bottom-10 left-8 text-4xl">
+          🧸
+        </div>
+
+        <div className="absolute bottom-10 right-8 text-4xl">
+          🍼
+        </div>
 
         <div className="relative mx-auto max-w-3xl">
 
@@ -1350,6 +1768,10 @@ export default function Home() {
 
           </div>
 
+          <div className="mt-4 text-3xl">
+            🍼 🧸 👶 🎀
+          </div>
+
           <p className="mt-5 text-xs font-bold tracking-[0.4em] text-blue-600">
             SPIDER BABY
           </p>
@@ -1358,21 +1780,21 @@ export default function Home() {
             Nuestra nueva aventura
           </h2>
 
-          <p className="mt-6 text-gray-500">
+          <p className="mt-6 text-2xl">
 
-            {datos.mama}
+            {datos.papa}
 
             <span className="mx-2 text-red-500">
               &
             </span>
 
-            {datos.papa}
+            {datos.mama}
 
           </p>
 
           <div className="mx-auto mt-10 h-1 w-20 rounded-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
 
-          <p className="mt-8 text-sm leading-relaxed text-gray-400">
+          <p className="mt-8 text-lg leading-relaxed text-gray-600">
 
             Gracias por acompañarnos
             a descubrir juntos
@@ -1384,7 +1806,11 @@ export default function Home() {
             ❤️ 💙 🩷
           </div>
 
-          <p className="mt-10 text-xs tracking-[0.3em] text-gray-300">
+          <div className="mt-8 text-3xl">
+            🎈 🍼 🧸 👶 🎀
+          </div>
+
+          <p className="mt-10 text-xs tracking-[0.3em] text-gray-500">
             2026
           </p>
 
