@@ -1776,7 +1776,7 @@ export default function Home() {
             SPIDER BABY
           </p>
 
-          <h2 className="mt-6 text-4xl font-black uppercase text-gray-800">
+          <h2 className="mt-6 text-4xl font-black uppercase">
             Nuestra nueva aventura
           </h2>
 
