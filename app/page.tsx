@@ -1168,7 +1168,7 @@ export default function Home() {
 
                       {selectedGuess === "nino"
                         ? "ALESANDRO LOPEZ MALDONADO"
-                        : "ALEXIA LOPEZ MALDONADO"}
+                        : "ANTONELA LOPEZ MALDONADO"}
 
                     </p>
 
