@@ -500,9 +500,9 @@ export default function Home() {
 
 
                 <p className="mx-auto mt-7 max-w-xs text-sm leading-relaxed text-gray-500">
-                  Una nueva aventura está
-                  por comenzar y queremos
-                  compartirla contigo.
+                  Queremos los 3 invitarte
+                  a cellebrar mi llegada
+                  mi nombre es...
 
                   <br />
 
