@@ -24,7 +24,7 @@ const datos = {
   whatsapp: "59168065549",
 
   mensajeWhatsApp:
-    "Hola Aldair y Adriana ❤️ Confirmo mi asistencia al Baby Shower y Revelación de Género del 5 de septiembre. 💙🩷",
+    "Hola Aldair y Adriana ❤️ Confirmo mi asistencia al Baby Shower de Antonela Lopez Maldonado del 5 de septiembre. 🩷🎀",
 };
 
 /* =========================================================
@@ -34,12 +34,6 @@ const datos = {
 export default function Home() {
   const [opened, setOpened] = useState(false);
   const [musicPlaying, setMusicPlaying] = useState(false);
-  const [secretOpen, setSecretOpen] = useState(false);
-
-  const [selectedGuess, setSelectedGuess] = useState<
-    "nino" | "nina" | null
-  >(null);
-
   const [timeLeft, setTimeLeft] = useState({
     dias: 0,
     horas: 0,
@@ -298,103 +292,6 @@ export default function Home() {
   };
 
   /* =========================================================
-     CONFETI
-  ========================================================= */
-
-  const lanzarConfeti = () => {
-    const colores = [
-      "💙",
-      "🩷",
-      "💙",
-      "🩷",
-      "🤍",
-      "💙",
-      "🩷",
-      "🔵",
-      "🩷",
-      "✨",
-      "⭐",
-    ];
-
-    for (let i = 0; i < 180; i++) {
-      const confeti =
-        document.createElement("div");
-
-      confeti.innerHTML =
-        colores[
-          Math.floor(
-            Math.random() *
-              colores.length
-          )
-        ];
-
-      confeti.style.position = "fixed";
-
-      confeti.style.left =
-        `${Math.random() * 100}vw`;
-
-      confeti.style.top = "-50px";
-
-      confeti.style.fontSize =
-        `${Math.random() * 15 + 12}px`;
-
-      confeti.style.zIndex = "99999";
-
-      confeti.style.pointerEvents =
-        "none";
-
-      const duracion =
-        Math.random() * 2500 + 3000;
-
-      const desplazamiento =
-        Math.random() * 300 - 150;
-
-      const rotacion =
-        Math.random() * 1000 - 500;
-
-      confeti.animate(
-        [
-          {
-            transform:
-              "translate3d(0,0,0) rotate(0deg)",
-            opacity: 1,
-          },
-          {
-            transform:
-              `translate3d(${desplazamiento}px,110vh,0) rotate(${rotacion}deg)`,
-            opacity: 0,
-          },
-        ],
-        {
-          duration: duracion,
-          easing:
-            "cubic-bezier(.2,.7,.3,1)",
-        }
-      );
-
-      document.body.appendChild(
-        confeti
-      );
-
-      setTimeout(() => {
-        confeti.remove();
-      }, duracion);
-    }
-  };
-
-  /* =========================================================
-     APUESTA
-  ========================================================= */
-
-  const elegirApuesta = (
-    opcion: "nino" | "nina"
-  ) => {
-    setSelectedGuess(opcion);
-    setSecretOpen(true);
-    lanzarConfeti();
-  };
-
-  /* =========================================================
      WHATSAPP
   ========================================================= */
 
@@ -602,11 +499,11 @@ export default function Home() {
                 </p>
 
                 <p className="my-2 text-pink-500">
-                  &
+                  🎀
                 </p>
 
                 <p className="text-xl font-black text-gray-800">
-                  Revelación de Género
+                  Baby Shower
                 </p>
 
                 <p className="mx-auto mt-7 max-w-xs text-sm leading-relaxed text-gray-500">
@@ -616,19 +513,12 @@ export default function Home() {
 
                   <br />
 
-                  Pero hay un secreto...
+                  Nuestra pequeña princesa
+                  ya tiene nombre...
                 </p>
 
-                <div className="mt-7 flex justify-center gap-2">
-
-                  <span className="rounded-full bg-blue-500 px-4 py-2 text-xs font-black text-white shadow-md">
-                    💙 ¿NIÑO?
-                  </span>
-
-                  <span className="rounded-full bg-pink-500 px-4 py-2 text-xs font-black text-white shadow-md">
-                    🩷 ¿NIÑA?
-                  </span>
-
+                <div className="mt-7 inline-block rounded-full bg-pink-500 px-6 py-3 text-sm font-black text-white shadow-md">
+                  🩷 ANTONELA LOPEZ MALDONADO 🎀
                 </div>
 
                 <p className="mt-7 text-lg font-bold text-gray-700">
@@ -812,8 +702,8 @@ export default function Home() {
 
                     <br />
 
-                    Y un pequeño secreto
-                    que nadie conoce.
+                    Y una pequeña princesa
+                    que ya tiene nombre.
 
                   </p>
 
@@ -824,7 +714,7 @@ export default function Home() {
                     </span>
 
                     <span className="rounded-full bg-pink-500 px-5 py-2 text-xs font-black text-white shadow-md">
-                      🩷 REVELACIÓN
+                      🎀 ANTONELA
                     </span>
 
                   </div>
@@ -934,272 +824,28 @@ export default function Home() {
                 <br />
                 <br />
 
-                Pero existe un pequeño detalle...
+                Y ahora podemos compartir contigo la noticia más bonita:
+                nuestra bebé es una niña.
 
               </p>
 
-              <div className="mx-auto mt-10 grid max-w-md grid-cols-2 gap-4">
-
-                <div className="rounded-3xl border border-blue-200 bg-blue-50/90 p-6 shadow-sm">
-
-                  <div className="text-4xl">
-                    💙
-                  </div>
-
-                  <p className="mt-3 font-black text-blue-600">
-                    ¿NIÑO?
-                  </p>
-
-                </div>
-
-                <div className="rounded-3xl border border-pink-200 bg-pink-50/90 p-6 shadow-sm">
-
-                  <div className="text-4xl">
-                    🩷
-                  </div>
-
-                  <p className="mt-3 font-black text-pink-600">
-                    ¿NIÑA?
-                  </p>
-
-                </div>
-
+              <div className="mx-auto mt-10 max-w-md rounded-3xl border border-pink-200 bg-pink-50/90 p-8 shadow-sm">
+                <div className="text-5xl">🩷🎀👶🎀🩷</div>
+                <p className="mt-5 text-sm font-black tracking-[0.25em] text-pink-500">
+                  NUESTRA PEQUEÑA PRINCESA
+                </p>
+                <p className="mt-3 text-3xl font-black uppercase text-pink-600">
+                  ANTONELA LOPEZ MALDONADO
+                </p>
               </div>
 
               <p className="mt-8 text-lg font-black text-gray-700">
-                ¡Nadie lo sabe todavía! 🤫
+                ¡Te esperamos para celebrar su llegada! 🩷
               </p>
 
             </div>
 
           </section>
-
-          {/* =====================================================
-              APUESTA
-          ===================================================== */}
-
-          <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-pink-50 px-5 py-28">
-
-            <div
-              className="absolute inset-0 bg-cover bg-center opacity-[0.08]"
-              style={{
-                backgroundImage:
-                  "url('/imagenes/FONDO2.jpg')",
-              }}
-            />
-
-            <div className="relative mx-auto max-w-5xl">
-
-              <div className="text-center">
-
-                <p className="text-xs font-black tracking-[0.4em] text-red-500">
-                  TU MISIÓN COMO INVITADO
-                </p>
-
-                <h2 className="mt-5 text-4xl font-black uppercase text-gray-800 md:text-5xl">
-                  ¿Cuál es tu apuesta?
-                </h2>
-
-                <p className="mx-auto mt-6 max-w-2xl leading-relaxed text-gray-500">
-
-                  Queremos que seas parte del juego.
-                  Elige lo que tú crees que será
-                  nuestro pequeño superhéroe.
-
-                </p>
-
-              </div>
-
-              <div className="mt-12 grid gap-6 md:grid-cols-2">
-
-                {/* NIÑO */}
-
-                <motion.button
-                  type="button"
-                  whileHover={{
-                    scale: 1.02,
-                    y: -5,
-                  }}
-                  whileTap={{
-                    scale: 0.98,
-                  }}
-                  onClick={() =>
-                    elegirApuesta("nino")
-                  }
-                  className="group rounded-[35px] border-2 border-blue-200 bg-white/95 p-8 text-left shadow-lg transition hover:border-blue-400"
-                >
-
-                  <div className="flex items-center justify-between">
-
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-3xl">
-                      💙
-                    </div>
-
-                    <span className="rounded-full bg-blue-500 px-4 py-2 text-xs font-black text-white">
-                      YO DIGO NIÑO
-                    </span>
-
-                  </div>
-
-                  <h3 className="mt-7 text-3xl font-black text-blue-600">
-                    ¿PIENSAS QUE ES NIÑO?
-                  </h3>
-
-                </motion.button>
-
-                {/* NIÑA */}
-
-                <motion.button
-                  type="button"
-                  whileHover={{
-                    scale: 1.02,
-                    y: -5,
-                  }}
-                  whileTap={{
-                    scale: 0.98,
-                  }}
-                  onClick={() =>
-                    elegirApuesta("nina")
-                  }
-                  className="group rounded-[35px] border-2 border-pink-200 bg-white/95 p-8 text-left shadow-lg transition hover:border-pink-400"
-                >
-
-                  <div className="flex items-center justify-between">
-
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-pink-100 text-3xl">
-                      🩷
-                    </div>
-
-                    <span className="rounded-full bg-pink-500 px-4 py-2 text-xs font-black text-white">
-                      YO DIGO NIÑA
-                    </span>
-
-                  </div>
-
-                  <h3 className="mt-7 text-3xl font-black text-pink-600">
-                    ¿PIENSAS QUE ES NIÑA?
-                  </h3>
-
-                </motion.button>
-
-              </div>
-
-            </div>
-
-          </section>
-
-          {/* =====================================================
-              RESULTADO DE LA APUESTA
-          ===================================================== */}
-
-          <AnimatePresence>
-
-            {secretOpen && (
-
-              <motion.section
-                initial={{
-                  opacity: 0,
-                  height: 0,
-                }}
-                animate={{
-                  opacity: 1,
-                  height: "auto",
-                }}
-                exit={{
-                  opacity: 0,
-                  height: 0,
-                }}
-                className="relative overflow-hidden px-5 py-24"
-              >
-
-                <div
-                  className="absolute inset-0 bg-cover bg-center opacity-[0.10]"
-                  style={{
-                    backgroundImage:
-                      "url('/imagenes/FONDO2.jpg')",
-                  }}
-                />
-
-                <div className="relative mx-auto max-w-xl text-center">
-
-                  <div className="text-6xl">
-                    {selectedGuess === "nino"
-                      ? "💙"
-                      : "🩷"}
-                  </div>
-
-                  <h2 className="mt-6 text-3xl font-black uppercase text-gray-800">
-
-                    {selectedGuess === "nino"
-                      ? "¡Tú apuestas por NIÑO!"
-                      : "¡Tú apuestas por NIÑA!"}
-
-                  </h2>
-
-                  <p className="mt-5 leading-relaxed text-gray-500">
-
-                    ¡Apuesta registrada! 😄
-
-                    <br />
-                    <br />
-
-                    Ahora solo queda esperar
-                    al gran momento de la revelación.
-
-                  </p>
-
-                  {/* NOMBRE */}
-
-                  <div
-                    className={`mt-8 rounded-3xl p-6 ${
-                      selectedGuess === "nino"
-                        ? "border border-blue-200 bg-blue-50"
-                        : "border border-pink-200 bg-pink-50"
-                    }`}
-                  >
-
-                    <p
-                      className={`text-2xl font-black ${
-                        selectedGuess === "nino"
-                          ? "text-blue-600"
-                          : "text-pink-600"
-                      }`}
-                    >
-
-                      {selectedGuess === "nino"
-                        ? "ALESANDRO LOPEZ MALDONADO"
-                        : "ANTONELA LOPEZ MALDONADO"}
-
-                    </p>
-
-                  </div>
-
-                  {/* MENSAJE */}
-
-                  <div className="mt-7 rounded-3xl bg-gradient-to-r from-blue-50 via-white to-pink-50 p-6">
-
-                    <p className="font-black text-gray-700">
-                      🤫 EL VERDADERO SECRETO
-                    </p>
-
-                    <p className="mt-3 text-sm text-gray-500">
-                      Nadie podrá saberlo hasta
-                      el día de la celebración.
-                    </p>
-
-                  </div>
-
-                  <div className="mt-6 text-3xl">
-                    🧸 👶 🎈
-                  </div>
-
-                </div>
-
-              </motion.section>
-
-            )}
-
-          </AnimatePresence>
 
           {/* =====================================================
               FOTOS DE BEBÉS
@@ -1650,8 +1296,8 @@ export default function Home() {
 
                 <br />
 
-                Ven preparado para descubrir
-                el gran secreto. 💙🩷
+                Ven a celebrar con nosotros
+                la llegada de nuestra pequeña Antonela. 🩷🎀
 
               </p>
 
@@ -1758,8 +1404,9 @@ export default function Home() {
               <p className="mt-8 text-lg leading-relaxed text-gray-600">
 
                 Gracias por acompañarnos
-                a descubrir juntos
-                el comienzo de esta nueva historia.
+                a celebrar juntos
+                la llegada de nuestra pequeña
+                Antonela. 🩷🎀
 
               </p>
 
