@@ -335,7 +335,7 @@ export default function Home() {
 
       <audio
         ref={audioRef}
-        src="/musica/musica1.mp3"
+        src="/musica/musica.mp3"
         loop
         preload="auto"
       />
