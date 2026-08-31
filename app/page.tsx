@@ -501,13 +501,10 @@ export default function Home() {
 
                 <p className="mx-auto mt-7 max-w-xs text-sm leading-relaxed text-gray-500">
                   Queremos los 3 invitarte
-                  a cellebrar mi llegada
+                  a celebrar mi llegada
                   mi nombre es...
 
                   <br />
-
-                  Nuestra pequeña princesa
-                  ya tiene nombre...
                 </p>
 
                 <div className="mt-7 inline-block rounded-full bg-pink-500 px-6 py-3 text-sm font-black text-white shadow-md">
@@ -515,7 +512,7 @@ export default function Home() {
                 </div>
 
                 <p className="mt-7 text-lg font-bold text-gray-700">
-
+                  MIS PAPÁS SON:
                   {datos.papa}
 
                   <span className="mx-2 text-red-500">
