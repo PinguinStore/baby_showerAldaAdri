@@ -512,7 +512,6 @@ export default function Home() {
                 </div>
 
                 <p className="mt-7 text-lg font-bold text-gray-700">
-                  MIS PAPÁS SON:
                   {datos.papa}
 
                   <span className="mx-2 text-red-500">
