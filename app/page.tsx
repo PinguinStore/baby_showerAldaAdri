@@ -512,6 +512,7 @@ export default function Home() {
                 </div>
 
                 <p className="mt-7 text-lg font-bold text-gray-700">
+
                   {datos.papa}
 
                   <span className="mx-2 text-red-500">
@@ -1186,7 +1187,7 @@ export default function Home() {
               <div className="text-center">
 
                 <p className="text-xs font-black tracking-[0.4em] text-red-500">
-                  PREPARA TU TRAJE
+                  UBICACIÓN DEL BABY SHOWER
                 </p>
 
                 <h2 className="mt-5 text-4xl font-black uppercase text-gray-800">
@@ -1271,7 +1272,7 @@ export default function Home() {
             <div className="relative mx-auto max-w-2xl">
 
               <p className="text-xs font-black tracking-[0.4em] text-blue-600">
-                ÚNETE A LA MISIÓN
+                CONFIRMA TU ASISTENCIA
               </p>
 
               <h2 className="mt-5 text-4xl font-black uppercase text-gray-800">
