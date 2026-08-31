@@ -475,7 +475,7 @@ export default function Home() {
                   </span>
 
                   <p className="text-[10px] font-black tracking-[0.3em] text-gray-600">
-                    UNA NUEVA AVENTURA
+                    POR EL AMOR DE MIS PAPIS
                   </p>
 
                   <span className="text-lg">
@@ -485,26 +485,19 @@ export default function Home() {
                 </div>
 
                 <h1 className="mt-8 text-5xl font-black uppercase italic leading-none text-blue-600">
-                  SPIDER
+                  LLEGO YO
                 </h1>
 
                 <h2 className="text-5xl font-black uppercase italic text-red-600">
-                  BABY
+                  SPIDER BABY
                 </h2>
 
                 <div className="mx-auto mt-5 h-1 w-28 rounded-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
 
                 <p className="mt-7 text-xl font-black text-gray-800">
-                  Baby Shower
+                  A ALEGRAR SUS DÍAS
                 </p>
 
-                <p className="my-2 text-pink-500">
-                  🎀
-                </p>
-
-                <p className="text-xl font-black text-gray-800">
-                  Baby Shower
-                </p>
 
                 <p className="mx-auto mt-7 max-w-xs text-sm leading-relaxed text-gray-500">
                   Una nueva aventura está
