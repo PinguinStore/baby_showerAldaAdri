@@ -11,10 +11,10 @@ const datos = {
   mama: "Adriana Maldonado",
   papa: "Aldair Lopez",
 
-  fechaEvento: "2026-09-05T14:30:00",
+  fechaEvento: "2026-10-10T14:30:00",
 
-  fechaTexto: "5 de septiembre de 2026",
-  hora: "14:30",
+fechaTexto: "10 de octubre de 2026",
+hora: "14:30",
 
   lugar: "Casa Cochabamba",
 
@@ -24,7 +24,7 @@ const datos = {
   whatsapp: "59168065549",
 
   mensajeWhatsApp:
-    "Hola Aldair y Adriana ❤️ Confirmo mi asistencia al Baby Shower de Antonela Lopez Maldonado del 5 de septiembre. 🩷🎀",
+  "Hola Aldair y Adriana ❤️ Confirmo mi asistencia al Baby Shower de Antonela Lopez Maldonado del 10 de octubre. 🩷🎀",
 };
 
 /* =========================================================
@@ -1124,13 +1124,13 @@ export default function Home() {
 
                   <div className="mt-4">
 
-                    <p className="text-5xl font-black uppercase tracking-tight text-blue-600 md:text-7xl">
-                      5
-                    </p>
+<p className="text-5xl font-black uppercase tracking-tight text-blue-600 md:text-7xl">
+  10
+</p>
 
-                    <p className="mt-1 text-2xl font-black uppercase text-gray-800 md:text-3xl">
-                      SEPTIEMBRE
-                    </p>
+<p className="mt-1 text-2xl font-black uppercase text-gray-800 md:text-3xl">
+  OCTUBRE
+</p>
 
                     <p className="mt-1 text-xl font-black text-pink-500">
                       2026
@@ -1168,74 +1168,75 @@ export default function Home() {
 
           </section>
 
-          {/* =====================================================
-              MAPA / INFORMACIÓN
-          ===================================================== */}
+{/* =====================================================
+    UBICACIÓN / INFORMACIÓN
+===================================================== */}
 
-          <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-pink-50 px-5 py-28">
+<section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-pink-50 px-5 py-28">
 
-            <div
-              className="absolute inset-0 bg-cover bg-center opacity-[0.35]"
-              style={{
-                backgroundImage:
-                  "url('/imagenes/FONDO2.jpg')",
-              }}
-            />
+  <div
+    className="absolute inset-0 bg-cover bg-center opacity-[0.35]"
+    style={{
+      backgroundImage:
+        "url('/imagenes/FONDO2.jpg')",
+    }}
+  />
 
-            <div className="relative mx-auto max-w-6xl">
+  <div className="relative mx-auto max-w-5xl">
 
-              <div className="text-center">
+    <div className="text-center">
 
-                <p className="text-xs font-black tracking-[0.4em] text-red-500">
-                  UBICACIÓN DEL BABY SHOWER
-                </p>
+      <p className="text-xs font-black tracking-[0.4em] text-red-500">
+        UBICACIÓN DEL BABY SHOWER
+      </p>
 
-                <h2 className="mt-5 text-4xl font-black uppercase text-gray-800">
-                  Nos vemos
-                </h2>
+      <h2 className="mt-5 text-4xl font-black uppercase text-gray-800 md:text-5xl">
+        Nos vemos
+      </h2>
 
-                <div className="mt-5 text-3xl">
-                  🎈 🧸 👶 🎈
-                </div>
+      <div className="mt-5 text-3xl">
+        🎈 🧸 👶 🎀
+      </div>
 
-              </div>
+    </div>
 
+    {/* UBICACIÓN PROVISIONAL */}
 
-              {/* MAPA CORREGIDO */}
+    <div className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-[40px] border-4 border-white bg-white/95 p-8 text-center shadow-2xl">
 
-              <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-[30px] border-4 border-white bg-white shadow-2xl">
+      <div className="flex justify-center">
 
-                <iframe
-                  title={`Ubicación de ${datos.lugar}`}
-                  src={mapaUrl}
-                  width="100%"
-                  height="400"
-                  style={{
-                    border: 0,
-                  }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                />
+        <img
+          src="/imagenes/location.gif"
+          alt="Ubicación"
+          className="h-48 w-48 object-contain md:h-60 md:w-60"
+        />
 
-              </div>
+      </div>
 
-              <div className="text-center">
+      <p className="mt-6 text-sm font-black tracking-[0.35em] text-blue-600">
+        📍 UBICACIÓN
+      </p>
 
-                <a
-                  href={mapaLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-8 inline-block rounded-full bg-gradient-to-r from-blue-600 to-pink-500 px-10 py-4 text-sm font-black text-white shadow-lg transition hover:scale-105"
-                >
-                  📍 ABRIR EN GOOGLE MAPS
-                </a>
+      <h3 className="mt-4 text-3xl font-black uppercase text-gray-800 md:text-4xl">
+        EN ALGÚN LUGAR DE LA PAZ
+      </h3>
 
-              </div>
+      <div className="mx-auto mt-6 h-1 w-24 rounded-full bg-gradient-to-r from-blue-500 via-red-500 to-pink-500" />
 
-            </div>
+      <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-gray-500">
+        La ubicación exacta será confirmada próximamente.
+      </p>
 
-          </section>
+      <div className="mt-7 flex justify-center gap-4 text-3xl">
+        🎈 🧸 👶 🎀
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
 
           {/* =====================================================
               CONFIRMACIÓN
